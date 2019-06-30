@@ -136,7 +136,7 @@ install_rtfm(){
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi
-    chmod +x /opt/rtfm/rtfm.py; /opt/rtfm/rtfm.py -u
+    chmod +x /opt/rtfm/rtfm.py; /opt/rtfm/rtfm.py -u >> script.log
     sed -i '/export PATH/s/$/\/opt\/rtfm:/' /root/.bashrc
 }
 
@@ -155,6 +155,10 @@ install_docker(){
     apt-get install -y -q docker-ce >> script.log 2>>script_error.log
     sleep 1s
     systemctl enable docker
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
     docker version
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
