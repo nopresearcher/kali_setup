@@ -136,7 +136,8 @@ install_rtfm(){
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi
-    chmod +x /opt/rtfm/rtfm.py; /opt/rtfm/rtfm.py -u >> script.log
+    chmod +x /opt/rtfm/rtfm.py
+    /opt/rtfm/rtfm.py -u >> script.log 2>&1
     sed -i '/export PATH/s/$/\/opt\/rtfm:/' /root/.bashrc
 }
 
