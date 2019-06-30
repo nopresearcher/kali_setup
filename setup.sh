@@ -181,9 +181,8 @@ john_bash_completion() {
 }
 
 compute_finish_time(){
-    printf "  ⏳  Time taken\n"
     finish_time=$(date +%s)
-    echo -e "${YELLOW}[i]${RESET} Time (roughly) taken: ${YELLOW}$(( $(( finish_time - start_time )) / 60 )) minutes${RESET}"
+    echo -e "  ⌛ Time (roughly) taken: ${YELLOW}$(( $(( finish_time - start_time )) / 60 )) minutes${RESET}"
 }
 
 main () {
