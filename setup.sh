@@ -62,7 +62,7 @@ kali_metapackages() {
 }
 
 install_kernel_headers() {
-    echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}kernel headers${RESET}"
+    printf "  ⏳  install kernel headers\n"
     apt -y -qq install make gcc "linux-headers-$(uname -r)" >> script.log 2>>script_error.log \
     || printf ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
     if [[ $? != 0 ]]; then
@@ -143,18 +143,15 @@ install_rtfm(){
 
 install_docker(){
     printf "  ⏳  Installing docker\n"
-    curl -fsSL --silent https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+    curl -fsSL --silent https://download.docker.com/linux/debian/gpg | sudo apt-key add - >> script.log 2>>script_error.log
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi
     echo 'deb https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list
-    sleep 1s
     apt_update
-    sleep 1s
     echo "\n [+] installing docker-ce via apt-get\n" >> script.log
     apt-get install -y -q docker-ce >> script.log 2>>script_error.log
-    sleep 1s
     systemctl enable docker >> script.log 2>>script_error.log
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
