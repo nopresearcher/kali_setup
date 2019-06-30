@@ -1,10 +1,10 @@
 #!/bin/bash
 # icons
-# ❌⏳💀🎉 ℹ️ ⚠️
+# ❌⏳💀🎉 ℹ️ ⚠️ 🚀
 
 # run update and upgrade, before running script
 # apt update && apt upgrade -y
-# curl -L https://bit.ly/320yIij | bash
+# curl -L --silent https://bit.ly/320yIij | bash
 
 # TODO 
 # systemctl enable sshd
@@ -30,7 +30,7 @@ if [[ "${EUID}" -ne 0 ]]; then
   echo -e ' '${RED}'[!]'${RESET}" Quitting..." 1>&2
   exit 1
 else
-  echo -e " ${BLUE}[*]${RESET} ${BOLD}Starting Kali setup script${RESET}"
+  echo -e "  🚀 ${BOLD}Starting Kali setup script${RESET}"
 fi
 
 
