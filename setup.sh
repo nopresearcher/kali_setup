@@ -63,7 +63,7 @@ kali_metapackages() {
 
 install_kernel_headers() {
     echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}kernel headers${RESET}"
-    apt -y -qq install make gcc "linux-headers-$(uname -r)" \
+    apt -y -qq install make gcc "linux-headers-$(uname -r)" >> script.log 2>>script_error.log \
     || printf ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
     if [[ $? != 0 ]]; then
     echo -e ' '${RED}'[!]'${RESET}" There was an ${RED}issue installing kernel headers${RESET}" 1>&2
@@ -155,12 +155,12 @@ install_docker(){
     echo "\n [+] installing docker-ce via apt-get\n" >> script.log
     apt-get install -y -q docker-ce >> script.log 2>>script_error.log
     sleep 1s
-    systemctl enable docker
+    systemctl enable docker >> script.log 2>>script_error.log
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi
-    docker version
+    docker version >> script.log 2>>script_error.log
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -168,6 +168,7 @@ install_docker(){
 }
 
 bash_aliases() {
+    printf "  ⏳  adding bash aliases\n"
     # git aliases
     echo "alias gs='git status'" >> /root/.bashrc
     echo "alias ga='git add -A'" >> /root/.bashrc
