@@ -1,6 +1,6 @@
 #!/bin/bash
 # icons
-# ❌⏳💀🎉 ℹ️ ⚠️ 🚀
+# ❌⏳💀🎉 ℹ️ ⚠️ 🚀 ✅ ♻ 🚮 🛡 🔧  ⚙ 
 
 # run update and upgrade, before running script
 # apt update && apt upgrade -y
@@ -105,7 +105,13 @@ install_base_os_tools(){
     # open-vm-tools-desktop - for vmware intergration
     # sshuttle - VPN/proxy over ssh 
     # autossh - specify password ofr ssh in cli
-    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace gnome-screenshot sshfs nfs-common open-vm-tools-desktop sshuttle autossh
+    # gimp - graphics design
+    # transmission-gtk - bittorrent client
+    # dbeaver - GUI universal db viewer
+    # jq - cli json processor
+    # aria2 - CLI download manager with torrent and http resume support
+    # git-sizer - detailed size information on git repos
+    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace gnome-screenshot sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer
     do
         apt_package_install $package
     done 
@@ -133,11 +139,31 @@ install_re_tools(){
 }
 
 install_exploit_tools(){
-    printf "  ⏳  Installing re programs\n"
-    # exiftool - multi arch libs
+    printf "  ⏳  Installing exploit programs\n"
+    # gcc-multilib - multi arch libs
     # mingw-w64 - windows compile
     # crackmapexec - pass the hash
     for package in gcc-multilib mingw-w64 crackmapexec
+    do
+        apt_package_install $package
+    done 
+}
+
+install_steg_programs(){
+    printf "  ⏳  Installing steg programs\n"
+    # stegosuite - steganography
+    # steghide - steganography
+    # steghide-doc - documentation for steghide
+    for package in stegosuite steghide steghide-doc  
+    do
+        apt_package_install $package
+    done
+}
+
+install_web_tools(){
+    printf "  ⏳  Installing web programs\n"
+    # gobuster - directory brute forcer
+    for package in gobuster
     do
         apt_package_install $package
     done 
@@ -258,7 +284,7 @@ install_ghidra(){
         echo "$1 failed " >> script.log
     fi  
     unzip -qq ghidra*
-    sed -i '/export PATH/s/$/\/root\/tools\/ghidra_9.0:/' /root/.bashrc
+    sed -i '/export PATH/s/$/\/root\/utils\/ghidra_9.0:/' /root/.bashrc
     rm ghidra*.zip
 }
 
@@ -270,18 +296,18 @@ install_peda() {
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi  
-    echo "source /root/tools/peda/peda.py" >> ~/.gdbinit
+    echo "source /root/utils/peda/peda.py" >> ~/.gdbinit
 }
 
 install_gef(){
     printf "  ⏳  Install GDB Enhanced Features - similar to peda\n"
-    cd /root/tools
+    cd /root/utils
     wget -O ~/.gdbinit-gef.py -q https://github.com/hugsy/gef/raw/master/gef.py
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi  
-    echo source /root/tools/.gdbinit-gef.py >> ~/.gdbinit
+    echo source /root/utils/.gdbinit-gef.py >> ~/.gdbinit
     cd ~
 }
 
@@ -295,7 +321,7 @@ install_binary_ninja(){
     fi  
     unzip -qq BinaryNinja-demo.zip
     rm BinaryNinja-demo.zip
-    sed -i '/export PATH/s/$/\/root\/tools\/binaryninja:/' /root/.bashrc
+    sed -i '/export PATH/s/$/\/root\/utils\/binaryninja:/' /root/.bashrc
     cd ~
 }
 
@@ -309,8 +335,18 @@ install_routersploit_framework(){
     fi  
     cd routersploit
     python3 -m pip install -q -r requirements.txt
-    sed -i '/export PATH/s/$/\/root\/tools\/routersploit:/' /root/.bashrc
+    sed -i '/export PATH/s/$/\/root\/utils\/routersploit:/' /root/.bashrc
     cd ~
+}
+
+install_stegcracker(){
+    printf "  ⏳  Install Stegcracker\n"
+    curl https://raw.githubusercontent.com/Paradoxis/StegCracker/master/stegcracker > /usr/local/bin/stegcracker
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi    
+    chmod +x /usr/local/bin/stegcracker
 }
 
 install_wine(){
@@ -338,7 +374,7 @@ install_dirsearch(){
 
 install_chrome(){
     printf "  ⏳  Install Chrome\n"
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -396,6 +432,69 @@ unzip_rockyou(){
     cd /root
 }
 
+install_gnome_theme(){
+    printf "  ⏳  install gnome tweak packages & custom theme\n"
+    apt_package_install gtk2-engines-murrine 
+    apt_package_install gtk2-engines-pixbuf
+    cd ~
+    git clone --quiet https://github.com/vinceliuice/vimix-gtk-themes
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+    cd vimix-gtk-themes
+    ./Install -n vimix -c dark -t beryl
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+}
+
+install_sourcepro_font(){
+    printf "  ⏳  install sourcepro font\n"
+    cd /root
+    curl --output google-mono-source.zip https://fonts.google.com/download?family=Source%20Code%20Pro
+    7z x google-mono-source.zip
+    mv SourceCodePro-* /usr/share/fonts
+    rm google-mono-source.zip
+}
+
+configure_gnome_settings(){
+    # use "dconf watch /" then use gnome tweks to change settings and it will print below
+    printf "  ⏳  tweaking gnome settings\n"
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '0'
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout '0'
+    gsettings set org.gnome.desktop.session idle-delay '0'
+    gsettings set org.gnome.desktop.screensaver lock-enabled false
+    gsettings set org.gnome.desktop.interface enable-animations false
+    # set dark theme
+    dconf write /org/gnome/desktop/interface/icon-theme "'Zen-Kali-Dark'"
+    dconf write /org/gnome/desktop/interface/gtk-theme "'vimix-dark-laptop-beryl'"
+    dconf write /org/gnome/shell/extensions/user-theme/name "'vimix-dark-laptop-beryl'"
+    # set scaling for tiny fonts
+    dconf write /org/gnome/desktop/interface/text-scaling-factor 0.79999999999999982
+    # set more detailed date/time
+    dconf write /org/gnome/desktop/interface/clock-show-seconds true
+    dconf write /org/gnome/desktop/interface/clock-show-date true
+    dconf write /org/gnome/desktop/interface/clock-show-weekday true
+    # set font
+    dconf write /org/gnome/desktop/interface/monospace-font-name "'Source Code Pro 11'"
+    # set cursor focus
+    dconf write /org/gnome/desktop/wm/preferences/focus-mode "'sloppy'"
+    # show trash icon
+    # show application windows at bottom
+    dconf write /org/gnome/shell/enabled-extensions "['apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'workspace-indicator@gnome-shell-extensions.gcampax.github.com', 'dash-to-dock@micxgx.gmail.com', 'ProxySwitcher@flannaghan.com', 'EasyScreenCast@iacopodeenosee.gmail.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'desktop-icons@csoriano', 'window-list@gnome-shell-extensions.gcampax.github.com']"
+    # fix application menu width
+    sed -i "s/this.categoriesBox.box.width = 275;/this.mainBox.box.width = 900;\\n\\tthis.categoriesBox.box.width = 500;/g" /usr/share/gnome-shell/extensions/apps-menu@gnome-shell-extensions.gcampax.github.com/extension.js
+}
+
+enable_auto_login(){
+    printf "  ⏳  enabling autologin\n"
+    sed -i "s/^#.*AutomaticLoginEnable/AutomaticLoginEnable/g ; s/#.*AutomaticLogin/AutomaticLogin/g" /etc/gdm3/daemon.conf
+}
+
 compute_finish_time(){
     finish_time=$(date +%s)
     echo -e "  ⌛ Time (roughly) taken: ${YELLOW}$(( $(( finish_time - start_time )) / 60 )) minutes${RESET}"
@@ -413,7 +512,9 @@ main () {
     install_base_os_tools
     install_usb_gps
     install_re_tools
-    install_exploit_tools 
+    install_exploit_tools
+    install_steg_programs
+    install_web_tools
     folder_prep
     github_desktop
     vscode
@@ -425,6 +526,7 @@ main () {
     #install_gef
     install_binary_ninja
     install_routersploit_framework
+    install_stegcracker
     install_wine
     install_dirsearch
     install_chrome
@@ -433,6 +535,10 @@ main () {
     bash_aliases
     john_bash_completion
     unzip_rockyou
+    install_gnome_theme
+    install_sourcepro_font
+    configure_gnome_settings
+    enable_auto_login
     compute_finish_time
 }
 
