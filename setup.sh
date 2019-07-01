@@ -36,6 +36,7 @@ fi
 
 compute_start_time(){
     start_time=$(date +%s)
+    echo "\n\n Install started - $start_time \n" >> script.log
 }
 
 apt_update() {
@@ -75,7 +76,8 @@ install_kernel_headers() {
 install_python2_related(){
     printf "  ⏳  Installing python2 related libraries\n"
     # terminaltables - 
-    pip3 -q install terminaltables
+    # pwntools - 
+    pip -q install terminaltables pwntools xortool
 }
 
 install_python3_related(){
@@ -88,6 +90,25 @@ install_python3_related(){
     # future - 
     # paramiko - 
     pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko
+}
+
+install_base_os_tools(){
+    printf "  ⏳  Installing base os tools programs\n"
+    # apt-transport-https - enable https for apt
+    # network-manager-openvpn-gnome - 
+    # openresolv - 
+    # strace - 
+    # ltrace - 
+    # gnome-screenshot - 
+    # sshfs - mount file system over ssh
+    # nfs-common - 
+    # open-vm-tools-desktop - for vmware intergration
+    # sshuttle - VPN/proxy over ssh 
+    # autossh - specify password ofr ssh in cli
+    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace gnome-screenshot sshfs nfs-common open-vm-tools-desktop sshuttle autossh
+    do
+        apt_package_install $package
+    done 
 }
 
 install_usb_gps(){
@@ -216,7 +237,7 @@ install_docker(){
 
 pull_cyberchef(){
     printf "  ⏳  Install cyberchef docker container\n"
-    docker pull remnux/cyberchef
+    docker pull remnux/cyberchef >> script.log 2>>script_error.log
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -238,7 +259,7 @@ install_ghidra(){
     fi  
     unzip -qq ghidra*
     sed -i '/export PATH/s/$/\/root\/tools\/ghidra_9.0:/' /root/.bashrc
-    rm ghidra*
+    rm ghidra*.zip
 }
 
 install_peda() {
@@ -250,6 +271,18 @@ install_peda() {
         echo "$1 failed " >> script.log
     fi  
     echo "source /root/tools/peda/peda.py" >> ~/.gdbinit
+}
+
+install_gef(){
+    printf "  ⏳  Install GDB Enhanced Features - similar to peda\n"
+    cd /root/tools
+    wget -O ~/.gdbinit-gef.py -q https://github.com/hugsy/gef/raw/master/gef.py
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi  
+    echo source /root/tools/.gdbinit-gef.py >> ~/.gdbinit
+    cd ~
 }
 
 install_binary_ninja(){
@@ -280,6 +313,18 @@ install_routersploit_framework(){
     cd ~
 }
 
+install_wine(){
+    printf "  ⏳  Install wine & wine32\n"
+    dpkg --add-architecture i386
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi  
+    apt_update
+    apt_package_install wine32 
+    apt_package_install wine
+}
+
 install_dirsearch(){
     printf "  ⏳  Install dirseach\n"
     cd /root/utils
@@ -289,6 +334,39 @@ install_dirsearch(){
         echo "$1 failed " >> script.log
     fi
     cd /root
+}
+
+install_chrome(){
+    printf "  ⏳  Install Chrome\n"
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi  
+    apt_package_install ./google-chrome-stable_current_amd64.deb
+    rm -f ./google-chrome-stable_current_amd64.deb
+    # enable chrome start as root
+    cp /usr/bin/google-chrome-stable /usr/bin/google-chrome-stable.old && sed -i 's/^\(exec.*\)$/\1 --user-data-dir/' /usr/bin/google-chrome-stable
+    sed -i -e 's@Exec=/usr/bin/google-chrome-stable %U@Exec=/usr/bin/google-chrome-stable %U --no-sandbox@g' /usr/share/applications/google-chrome.desktop 
+    # chrome alias
+    echo "alias chrome='google-chrome-stable --no-sandbox file:///root/dev/start_page/index.html'" >> /root/.bashrc
+}
+
+install_chromium(){
+    printf "  ⏳  Install Chromium\n"
+    apt_package_install chromium
+    echo "# simply override settings above" >> /etc/chromium/default
+    echo 'CHROMIUM_FLAGS="--password-store=detect --user-data-dir"' >> /etc/chromium/default
+}
+
+install_nmap_vulscan(){
+    printf "  ⏳  Install NMAP vulscan\n"
+    cd /usr/share/nmap/scripts/
+    git clone --quiet https://github.com/scipag/vulscan.git
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi  
 }
 
 bash_aliases() {
@@ -321,6 +399,7 @@ unzip_rockyou(){
 compute_finish_time(){
     finish_time=$(date +%s)
     echo -e "  ⌛ Time (roughly) taken: ${YELLOW}$(( $(( finish_time - start_time )) / 60 )) minutes${RESET}"
+    echo "\n\n Install completed - $finish_time \n" >> script.log
 }
 
 main () {
@@ -331,6 +410,7 @@ main () {
     install_kernel_headers
     install_python2_related
     install_python3_related
+    install_base_os_tools
     install_usb_gps
     install_re_tools
     install_exploit_tools 
@@ -342,9 +422,14 @@ main () {
     pull_cyberchef
     install_ghidra
     install_peda
+    #install_gef
     install_binary_ninja
     install_routersploit_framework
+    install_wine
     install_dirsearch
+    install_chrome
+    install_chromium
+    install_nmap_vulscan
     bash_aliases
     john_bash_completion
     unzip_rockyou
