@@ -72,6 +72,56 @@ install_kernel_headers() {
     fi
 }
 
+install_python2_related(){
+    printf "  ⏳  Installing python2 related libraries\n"
+    # terminaltables - 
+    pip3 -q install terminaltables
+}
+
+install_python3_related(){
+    printf "  ⏳  Installing python3 related libraries\n"
+    # pipenv - python virtual environments
+    # pysmb - python smb library used in some exploits
+    # pycryptodome - python crypto module
+    # pysnmp - 
+    # requests - 
+    # future - 
+    # paramiko - 
+    pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko
+}
+
+install_usb_gps(){
+    printf "  ⏳  Installing gpsd for USB GPS Receivers\n"
+    # gpsd - daemon for USB GPS device
+    # gpsd-clients - communicate with gpsd and utilities
+    for package in gpsd gpsd-clients
+    do
+        apt_package_install $package
+    done
+}
+
+install_re_tools(){
+    printf "  ⏳  Installing re programs\n"
+    # exiftool - 
+    # okteta - 
+    # hexcurse - 
+    for package in exiftool okteta hexcurse
+    do
+        apt_package_install $package
+    done 
+}
+
+install_exploit_tools(){
+    printf "  ⏳  Installing re programs\n"
+    # exiftool - multi arch libs
+    # mingw-w64 - windows compile
+    # crackmapexec - pass the hash
+    for package in gcc-multilib mingw-w64 crackmapexec
+    do
+        apt_package_install $package
+    done 
+}
+
 folder_prep(){
     # create folders for later installs and workflow
     printf "  ⏳  making directories\n"
@@ -164,13 +214,65 @@ install_docker(){
     fi
 }
 
+install_ghidra(){
+    printf "  ⏳  Install Ghidra\n"
+    cd /root/utils
+    wget https://www.ghidra-sre.org/ghidra_9.0.4_PUBLIC_20190516.zip
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi  
+    unzip -qq ghidra*
+    sed -i '/export PATH/s/$/\/root\/tools\/ghidra_9.0:/' /root/.bashrc
+    rm ghidra*
+}
+
+install_peda() {
+    printf "  ⏳  Install Python Exploit Development Assistance\n"
+    cd /root/utils
+    git clone --quiet https://github.com/longld/peda.git ~/peda
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi  
+    echo "source /root/tools/peda/peda.py" >> ~/.gdbinit
+}
+
+install_binary_ninja(){
+    printf "  ⏳  Install binary ninja\n"
+    cd /root/utils
+    wget https://cdn.binary.ninja/installers/BinaryNinja-demo.zip
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi  
+    unzip -qq BinaryNinja-demo.zip
+    rm BinaryNinja-demo.zip
+    sed -i '/export PATH/s/$/\/root\/tools\/binaryninja:/' /root/.bashrc
+    cd ~
+}
+
+install_routersploit_framework(){
+    printf "  ⏳  Install routersploit framework\n"
+    cd /root/utils
+    git clone --quiet https://www.github.com/threat9/routersploit
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi  
+    cd routersploit
+    python3 -m pip install -q -r requirements.txt
+    sed -i '/export PATH/s/$/\/root\/tools\/routersploit:/' /root/.bashrc
+    cd ~
+}
+
 bash_aliases() {
     printf "  ⏳  adding bash aliases\n"
     # git aliases
     echo "alias gs='git status'" >> /root/.bashrc
     echo "alias ga='git add -A'" >> /root/.bashrc
     # increase history size
-    sed -i "s/HISTSIZE=1000/HISTSIZE=100000/g" /root/.bashrc
+    sed -i "s/HISTSIZE=1000/HISTSIZE=1000000/g" /root/.bashrc
     # establish path baseline
     echo "export PATH=$PATH:" >> /root/.bashrc
 }
@@ -191,11 +293,20 @@ main () {
     #apt_upgrade
     kali_metapackages
     install_kernel_headers
+    install_python2_related
+    install_python3_related
+    install_usb_gps
+    install_re_tools
+    install_exploit_tools 
     folder_prep
     github_desktop
     vscode
     install_rtfm
     install_docker
+    install_ghidra
+    install_peda
+    install_binary_ninja
+    install_routersploit_framework
     bash_aliases
     john_bash_completion
     compute_finish_time
