@@ -341,7 +341,7 @@ install_routersploit_framework(){
 
 install_stegcracker(){
     printf "  ⏳  Install Stegcracker\n"
-    curl https://raw.githubusercontent.com/Paradoxis/StegCracker/master/stegcracker > /usr/local/bin/stegcracker
+    curl --silent https://raw.githubusercontent.com/Paradoxis/StegCracker/master/stegcracker > /usr/local/bin/stegcracker
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -453,8 +453,8 @@ install_gnome_theme(){
 install_sourcepro_font(){
     printf "  ⏳  install sourcepro font\n"
     cd /root
-    curl --output google-mono-source.zip https://fonts.google.com/download?family=Source%20Code%20Pro
-    7z x google-mono-source.zip
+    curl --silent --output google-mono-source.zip https://fonts.google.com/download?family=Source%20Code%20Pro
+    7z x google-mono-source.zip >> script.log
     mv SourceCodePro-* /usr/share/fonts
     rm google-mono-source.zip
 }
