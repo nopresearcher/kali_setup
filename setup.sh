@@ -214,10 +214,24 @@ install_docker(){
     fi
 }
 
+pull_cyberchef(){
+    printf "  ⏳  Install cyberchef docker container\n"
+    docker pull remnux/cyberchef
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+    echo "# Run docker cyberchef" >> script_todo.log  
+    echo "# docker run -d -p 8080:8080 remnux/cyberchef" >> script_todo.log  
+    echo "# http://localhost:8080/" >> script_todo.log  
+    echo "# docker ps" >> script_todo.log  
+    echo "# docker stop <container id>" >> script_todo.log  
+}
+
 install_ghidra(){
     printf "  ⏳  Install Ghidra\n"
     cd /root/utils
-    wget https://www.ghidra-sre.org/ghidra_9.0.4_PUBLIC_20190516.zip
+    wget --quiet https://www.ghidra-sre.org/ghidra_9.0.4_PUBLIC_20190516.zip
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -241,7 +255,7 @@ install_peda() {
 install_binary_ninja(){
     printf "  ⏳  Install binary ninja\n"
     cd /root/utils
-    wget https://cdn.binary.ninja/installers/BinaryNinja-demo.zip
+    wget --quiet https://cdn.binary.ninja/installers/BinaryNinja-demo.zip
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -266,6 +280,17 @@ install_routersploit_framework(){
     cd ~
 }
 
+install_dirsearch(){
+    printf "  ⏳  Install dirseach\n"
+    cd /root/utils
+    git clone --quiet https://github.com/maurosoria/dirsearch.git
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+    cd /root
+}
+
 bash_aliases() {
     printf "  ⏳  adding bash aliases\n"
     # git aliases
@@ -280,6 +305,17 @@ bash_aliases() {
 john_bash_completion() {
     printf "  ⏳  enabling john bash completion\n"
     echo ". /usr/share/bash-completion/completions/john.bash_completion" >> /root/.bashrc
+}
+
+unzip_rockyou(){
+    printf "  ⏳  Install gunzip rockyou\n"
+    cd /usr/share/wordlists/
+    gunzip -q /usr/share/wordlists/rockyou.txt.gz
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+    cd /root
 }
 
 compute_finish_time(){
@@ -303,12 +339,15 @@ main () {
     vscode
     install_rtfm
     install_docker
+    pull_cyberchef
     install_ghidra
     install_peda
     install_binary_ninja
     install_routersploit_framework
+    install_dirsearch
     bash_aliases
     john_bash_completion
+    unzip_rockyou
     compute_finish_time
 }
 
