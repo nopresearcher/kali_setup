@@ -5,7 +5,12 @@
 # run update and upgrade, before running script
 # apt update && apt upgrade -y
 # curl -L --silent https://bit.ly/320yIij | bash
-
+#
+# you may want to modify a few things like:
+# configure_git
+# configure_vim
+# configure_wireshark
+#
 # TODO 
 # systemctl enable sshd
 # sed sshd_config for permit root login and password, x11 forwarding, etc
@@ -23,6 +28,9 @@ RESET="\033[00m" # Normal
 
 # set env variable for apt-get installs
 export DEBIAN_FRONTEND=noninteractive
+
+# set git to cache credentials for 30 minutes
+git config --global credential.helper "cache --timeout=1800"
 
 # verify running as root
 if [[ "${EUID}" -ne 0 ]]; then
@@ -432,6 +440,12 @@ unzip_rockyou(){
     cd /root
 }
 
+enable_vbox_clipboard(){
+    printf "  ⏳  enable vbox clipboard support\n"
+    echo "# Enable VirtualBox Clipboard" >> /root/.bashrc
+    echo "VBoxClient --clipboard" >> /root/.bashrc
+}
+
 install_gnome_theme(){
     printf "  ⏳  install gnome tweak packages & custom theme\n"
     apt_package_install gtk2-engines-murrine 
@@ -495,10 +509,105 @@ enable_auto_login(){
     sed -i "s/^#.*AutomaticLoginEnable/AutomaticLoginEnable/g ; s/#.*AutomaticLogin/AutomaticLogin/g" /etc/gdm3/daemon.conf
 }
 
+configure_vim(){
+    printf "  ⏳  configure vim\n"
+    cd /root
+    cat > .vimrc <<-ENDOFVIM
+    set tabstop=8
+    set expandtab
+    set shiftwidth=4
+    set softtabstop=4
+    set background=dark
+    syntax on
+    set mouse=a
+    set number
+	ENDOFVIM
+}
+
+configure_wireshark(){
+    printf "  ⏳  configure wireshark\n"
+    cd /root
+    cat > /root/.config/wireshark/preferences <<-ENDOFWIRESHARK
+    # Default capture device
+    # A string
+    capture.device: eth0
+
+    # Scroll packet list during capture?
+    # TRUE or FALSE (case-insensitive)
+    capture.auto_scroll: FALSE
+
+    # Resolve Ethernet MAC address to manufacturer names
+    # TRUE or FALSE (case-insensitive)
+    nameres.mac_name: FALSE
+
+    # Resolve TCP/UDP ports into service names
+    # TRUE or FALSE (case-insensitive)
+    nameres.transport_name: FALSE
+
+    # Capture in Pcap-NG format?
+    # TRUE or FALSE (case-insensitive)
+    capture.pcap_ng: FALSE  
+	ENDOFWIRESHARK
+}
+
+configure_git(){
+    printf "  ⏳  Configure git username, email, name\n"
+    git config --global user.name "NOP Researcher"
+    git config --global user.email nopresearcher@gmail.com
+    git config --global credential.username "nopresearcher"
+}
+
+configure_metasploit(){
+    printf "  ⏳  configure metasploit\n"
+    service postgresql start
+    msfdb init
+}
+
+pull_utilities(){
+    printf "  ⏳  Pull nopresearcher utilities\n"
+    cd /root/utils
+    git clone --quiet https://github.com/nopresearcher/utilities.git
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+    sed -i '/export PATH/s/$/\/root\/utils\/utilities:/' /root/.bashrc
+}
+
+apt_cleanup(){
+    printf "  ⏳  cleaning up apt\n"
+    DEBIAN_FRONTEND=noninteractive apt-get -f install
+    apt-get -y autoremove
+    apt-get -y autoclean
+    apt-get -y clean
+}
+
+additional_clean(){
+    printf "  ⏳  additional cleaning\n"
+    cd /root # go home
+    updatedb # update slocated database
+    history -cw 2>/dev/null # clean history
+}
+
+manual_stuff_to_do(){
+    printf "  ⏳  Adding Manual work\n"
+    echo "======Firefox addons=====" >> script_todo.log
+    echo "FoxyProxy Standard" >> script_todo.log
+    echo "" >> script_todo.log
+    echo "======Password=====" >> script_todo.log
+    echo "CHANGE YO PASSWORD" >> script_todo.log
+    echo "passwd root" >> script_todo.log
+}
+
 compute_finish_time(){
     finish_time=$(date +%s)
     echo -e "  ⌛ Time (roughly) taken: ${YELLOW}$(( $(( finish_time - start_time )) / 60 )) minutes${RESET}"
     echo "\n\n Install completed - $finish_time \n" >> script.log
+}
+
+script_todo_print() {
+    printf "  ⏳  Printing todo\n"
+    cat script_todo.log
 }
 
 main () {
@@ -535,11 +644,21 @@ main () {
     bash_aliases
     john_bash_completion
     unzip_rockyou
+    #enable_vbox_clipboard
     install_gnome_theme
     install_sourcepro_font
     configure_gnome_settings
     enable_auto_login
+    configure_vim
+    configure_wireshark
+    #configure_git
+    configure_metasploit
+    pull_utilities
+    apt_cleanup
+    additional_clean
+    manual_stuff_to_do
     compute_finish_time
+    script_todo_print
 }
 
 main    
