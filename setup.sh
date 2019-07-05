@@ -48,12 +48,12 @@ compute_start_time(){
 }
 
 apt_update() {
-    printf "  ⏳  apt-get update\n"
+    printf "  ⏳  apt-get update\n" | tee -a script.log
     apt-get update -qq >> script.log 2>>script_error.log
 }
 
 apt_upgrade() {
-    printf "  ⏳  apt-get upgrade\n"
+    printf "  ⏳  apt-get upgrade\n" | tee -a script.log
     DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -qq >> script.log 2>>script_error.log
 }
 
@@ -63,7 +63,7 @@ apt_package_install() {
 }
 
 kali_metapackages() {
-    printf "  ⏳  install Kali metapackages\n"
+    printf "  ⏳  install Kali metapackages\n" | tee -a script.log
     for package in kali-linux-forensic kali-linux-pwtools kali-linux-rfid kali-linux-sdr kali-linux-voip kali-linux-web kali-linux-wireless forensics-all
     do
         apt_package_install $package
@@ -71,7 +71,7 @@ kali_metapackages() {
 }
 
 install_kernel_headers() {
-    printf "  ⏳  install kernel headers\n"
+    printf "  ⏳  install kernel headers\n" | tee -a script.log
     apt -y -qq install make gcc "linux-headers-$(uname -r)" >> script.log 2>>script_error.log \
     || printf ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
     if [[ $? != 0 ]]; then
@@ -82,14 +82,14 @@ install_kernel_headers() {
 }
 
 install_python2_related(){
-    printf "  ⏳  Installing python2 related libraries\n"
+    printf "  ⏳  Installing python2 related libraries\n" | tee -a script.log
     # terminaltables - 
     # pwntools - 
     pip -q install terminaltables pwntools xortool
 }
 
 install_python3_related(){
-    printf "  ⏳  Installing python3 related libraries\n"
+    printf "  ⏳  Installing python3 related libraries\n" | tee -a script.log
     # pipenv - python virtual environments
     # pysmb - python smb library used in some exploits
     # pycryptodome - python crypto module
@@ -101,7 +101,7 @@ install_python3_related(){
 }
 
 install_base_os_tools(){
-    printf "  ⏳  Installing base os tools programs\n"
+    printf "  ⏳  Installing base os tools programs\n" | tee -a script.log
     # apt-transport-https - enable https for apt
     # network-manager-openvpn-gnome - 
     # openresolv - 
@@ -126,7 +126,7 @@ install_base_os_tools(){
 }
 
 install_usb_gps(){
-    printf "  ⏳  Installing gpsd for USB GPS Receivers\n"
+    printf "  ⏳  Installing gpsd for USB GPS Receivers\n" | tee -a script.log
     # gpsd - daemon for USB GPS device
     # gpsd-clients - communicate with gpsd and utilities
     for package in gpsd gpsd-clients
@@ -136,7 +136,7 @@ install_usb_gps(){
 }
 
 install_re_tools(){
-    printf "  ⏳  Installing re programs\n"
+    printf "  ⏳  Installing re programs\n" | tee -a script.log
     # exiftool - 
     # okteta - 
     # hexcurse - 
@@ -147,7 +147,7 @@ install_re_tools(){
 }
 
 install_exploit_tools(){
-    printf "  ⏳  Installing exploit programs\n"
+    printf "  ⏳  Installing exploit programs\n" | tee -a script.log
     # gcc-multilib - multi arch libs
     # mingw-w64 - windows compile
     # crackmapexec - pass the hash
@@ -158,7 +158,7 @@ install_exploit_tools(){
 }
 
 install_steg_programs(){
-    printf "  ⏳  Installing steg programs\n"
+    printf "  ⏳  Installing steg programs\n" | tee -a script.log
     # stegosuite - steganography
     # steghide - steganography
     # steghide-doc - documentation for steghide
@@ -169,7 +169,7 @@ install_steg_programs(){
 }
 
 install_web_tools(){
-    printf "  ⏳  Installing web programs\n"
+    printf "  ⏳  Installing web programs\n" | tee -a script.log
     # gobuster - directory brute forcer
     for package in gobuster
     do
@@ -179,7 +179,7 @@ install_web_tools(){
 
 folder_prep(){
     # create folders for later installs and workflow
-    printf "  ⏳  making directories\n"
+    printf "  ⏳  making directories\n" | tee -a script.log
     mkdir -p /root/git
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
@@ -203,7 +203,7 @@ folder_prep(){
 }
 
 github_desktop() {
-    printf "  ⏳  Github desktop - fork for linux https://github.com/shiftkey/desktop/releases\n"
+    printf "  ⏳  Github desktop - fork for linux https://github.com/shiftkey/desktop/releases\n" | tee -a script.log
     cd /root/Downloads
     wget --quiet https://github.com/shiftkey/desktop/releases/download/release-1.6.6-linux2/GitHubDesktop-linux-1.6.6-linux2.deb
     if [[ $? != 0 ]]; then
@@ -215,7 +215,7 @@ github_desktop() {
 }
 
 vscode() {
-     printf "  ⏳  Installing VS Code\n"
+     printf "  ⏳  Installing VS Code\n" | tee -a script.log
     # Download the Microsoft GPG key, and convert it from OpenPGP ASCII 
     # armor format to GnuPG format
     curl --silent https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
@@ -235,7 +235,7 @@ vscode() {
 }
 
 install_rtfm(){
-    printf "  ⏳  Installing RTFM\n"
+    printf "  ⏳  Installing RTFM\n" | tee -a script.log
     git clone --quiet https://github.com/leostat/rtfm.git /opt/rtfm/
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
@@ -247,7 +247,7 @@ install_rtfm(){
 }
 
 install_docker(){
-    printf "  ⏳  Installing docker\n"
+    printf "  ⏳  Installing docker\n" | tee -a script.log
     curl -fsSL --silent https://download.docker.com/linux/debian/gpg | sudo apt-key add - >> script.log 2>>script_error.log
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
@@ -270,7 +270,7 @@ install_docker(){
 }
 
 pull_cyberchef(){
-    printf "  ⏳  Install cyberchef docker container\n"
+    printf "  ⏳  Install cyberchef docker container\n" | tee -a script.log
     docker pull remnux/cyberchef >> script.log 2>>script_error.log
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
@@ -284,7 +284,7 @@ pull_cyberchef(){
 }
 
 install_ghidra(){
-    printf "  ⏳  Install Ghidra\n"
+    printf "  ⏳  Install Ghidra\n" | tee -a script.log
     cd /root/utils
     wget --quiet https://www.ghidra-sre.org/ghidra_9.0.4_PUBLIC_20190516.zip
     if [[ $? != 0 ]]; then
@@ -297,7 +297,7 @@ install_ghidra(){
 }
 
 install_peda() {
-    printf "  ⏳  Install Python Exploit Development Assistance\n"
+    printf "  ⏳  Install Python Exploit Development Assistance\n" | tee -a script.log
     cd /root/utils
     git clone --quiet https://github.com/longld/peda.git ~/peda
     if [[ $? != 0 ]]; then
@@ -308,7 +308,7 @@ install_peda() {
 }
 
 install_gef(){
-    printf "  ⏳  Install GDB Enhanced Features - similar to peda\n"
+    printf "  ⏳  Install GDB Enhanced Features - similar to peda\n" | tee -a script.log
     cd /root/utils
     wget -O ~/.gdbinit-gef.py -q https://github.com/hugsy/gef/raw/master/gef.py
     if [[ $? != 0 ]]; then
@@ -320,7 +320,7 @@ install_gef(){
 }
 
 install_binary_ninja(){
-    printf "  ⏳  Install binary ninja\n"
+    printf "  ⏳  Install binary ninja\n" | tee -a script.log
     cd /root/utils
     wget --quiet https://cdn.binary.ninja/installers/BinaryNinja-demo.zip
     if [[ $? != 0 ]]; then
@@ -334,7 +334,7 @@ install_binary_ninja(){
 }
 
 install_routersploit_framework(){
-    printf "  ⏳  Install routersploit framework\n"
+    printf "  ⏳  Install routersploit framework\n" | tee -a script.log
     cd /root/utils
     git clone --quiet https://www.github.com/threat9/routersploit
     if [[ $? != 0 ]]; then
@@ -348,7 +348,7 @@ install_routersploit_framework(){
 }
 
 install_stegcracker(){
-    printf "  ⏳  Install Stegcracker\n"
+    printf "  ⏳  Install Stegcracker\n" | tee -a script.log
     curl --silent https://raw.githubusercontent.com/Paradoxis/StegCracker/master/stegcracker > /usr/local/bin/stegcracker
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
@@ -358,7 +358,7 @@ install_stegcracker(){
 }
 
 install_wine(){
-    printf "  ⏳  Install wine & wine32\n"
+    printf "  ⏳  Install wine & wine32\n" | tee -a script.log
     dpkg --add-architecture i386
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
@@ -370,7 +370,7 @@ install_wine(){
 }
 
 install_dirsearch(){
-    printf "  ⏳  Install dirseach\n"
+    printf "  ⏳  Install dirseach\n" | tee -a script.log
     cd /root/utils
     git clone --quiet https://github.com/maurosoria/dirsearch.git
     if [[ $? != 0 ]]; then
@@ -381,7 +381,7 @@ install_dirsearch(){
 }
 
 install_chrome(){
-    printf "  ⏳  Install Chrome\n"
+    printf "  ⏳  Install Chrome\n" | tee -a script.log
     wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
@@ -397,14 +397,14 @@ install_chrome(){
 }
 
 install_chromium(){
-    printf "  ⏳  Install Chromium\n"
+    printf "  ⏳  Install Chromium\n" | tee -a script.log
     apt_package_install chromium
     echo "# simply override settings above" >> /etc/chromium/default
     echo 'CHROMIUM_FLAGS="--password-store=detect --user-data-dir"' >> /etc/chromium/default
 }
 
 install_nmap_vulscan(){
-    printf "  ⏳  Install NMAP vulscan\n"
+    printf "  ⏳  Install NMAP vulscan\n" | tee -a script.log
     cd /usr/share/nmap/scripts/
     git clone --quiet https://github.com/scipag/vulscan.git
     if [[ $? != 0 ]]; then
@@ -414,7 +414,7 @@ install_nmap_vulscan(){
 }
 
 bash_aliases() {
-    printf "  ⏳  adding bash aliases\n"
+    printf "  ⏳  adding bash aliases\n" | tee -a script.log
     # git aliases
     echo "alias gs='git status'" >> /root/.bashrc
     echo "alias ga='git add -A'" >> /root/.bashrc
@@ -425,12 +425,12 @@ bash_aliases() {
 }
 
 john_bash_completion() {
-    printf "  ⏳  enabling john bash completion\n"
+    printf "  ⏳  enabling john bash completion\n" | tee -a script.log
     echo ". /usr/share/bash-completion/completions/john.bash_completion" >> /root/.bashrc
 }
 
 unzip_rockyou(){
-    printf "  ⏳  Install gunzip rockyou\n"
+    printf "  ⏳  Install gunzip rockyou\n" | tee -a script.log
     cd /usr/share/wordlists/
     gunzip -q /usr/share/wordlists/rockyou.txt.gz
     if [[ $? != 0 ]]; then
@@ -441,13 +441,13 @@ unzip_rockyou(){
 }
 
 enable_vbox_clipboard(){
-    printf "  ⏳  enable vbox clipboard support\n"
+    printf "  ⏳  enable vbox clipboard support\n" | tee -a script.log
     echo "# Enable VirtualBox Clipboard" >> /root/.bashrc
     echo "VBoxClient --clipboard" >> /root/.bashrc
 }
 
 install_gnome_theme(){
-    printf "  ⏳  install gnome tweak packages & custom theme\n"
+    printf "  ⏳  install gnome tweak packages & custom theme\n" | tee -a script.log
     apt_package_install gtk2-engines-murrine 
     apt_package_install gtk2-engines-pixbuf
     cd ~
@@ -457,7 +457,7 @@ install_gnome_theme(){
         echo "$1 failed " >> script.log
     fi
     cd vimix-gtk-themes
-    ./Install -n vimix -c dark -t beryl
+    ./Install -n vimix -c dark -t beryl >> script.log 2>>script_error.log
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -465,9 +465,9 @@ install_gnome_theme(){
 }
 
 install_sourcepro_font(){
-    printf "  ⏳  install sourcepro font\n"
+    printf "  ⏳  install sourcepro font\n" | tee -a script.log
     cd /root
-    curl --silent --output google-mono-source.zip https://fonts.google.com/download?family=Source%20Code%20Pro
+    curl --silent --output google-mono-source.zip https://fonts.google.com/download?family=Source%20Code%20Pro >> script.log 2>>script_error.log
     7z x google-mono-source.zip >> script.log
     mv SourceCodePro-* /usr/share/fonts
     rm google-mono-source.zip
@@ -475,7 +475,7 @@ install_sourcepro_font(){
 
 configure_gnome_settings(){
     # use "dconf watch /" then use gnome tweks to change settings and it will print below
-    printf "  ⏳  tweaking gnome settings\n"
+    printf "  ⏳  tweaking gnome settings\n" | tee -a script.log
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '0'
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
@@ -505,12 +505,12 @@ configure_gnome_settings(){
 }
 
 enable_auto_login(){
-    printf "  ⏳  enabling autologin\n"
+    printf "  ⏳  enabling autologin\n" | tee -a script.log
     sed -i "s/^#.*AutomaticLoginEnable/AutomaticLoginEnable/g ; s/#.*AutomaticLogin/AutomaticLogin/g" /etc/gdm3/daemon.conf
 }
 
 configure_gdb(){
-    printf "  ⏳  configure gdb\n"
+    printf "  ⏳  configure gdb\n" | tee -a script.log
     cd /root
     cat > .gdbinit <<-ENDOFGDB
     # use intel assembly syntax
@@ -521,7 +521,7 @@ configure_gdb(){
 }
 
 configure_vim(){
-    printf "  ⏳  configure vim\n"
+    printf "  ⏳  configure vim\n" | tee -a script.log
     cd /root
     cat > .vimrc <<-ENDOFVIM
     set tabstop=8
@@ -538,8 +538,9 @@ configure_vim(){
 }
 
 configure_wireshark(){
-    printf "  ⏳  configure wireshark\n"
+    printf "  ⏳  configure wireshark\n" | tee -a script.log
     cd /root
+    mkdir -p /root/.config/wireshark
     cat > /root/.config/wireshark/preferences <<-ENDOFWIRESHARK
     # Default capture device
     # A string
@@ -580,20 +581,20 @@ configure_wireshark(){
 }
 
 configure_git(){
-    printf "  ⏳  Configure git username, email, name\n"
+    printf "  ⏳  Configure git username, email, name\n" | tee -a script.log
     git config --global user.name "NOP Researcher"
     git config --global user.email nopresearcher@gmail.com
     git config --global credential.username "nopresearcher"
 }
 
 configure_metasploit(){
-    printf "  ⏳  configure metasploit\n"
+    printf "  ⏳  configure metasploit\n" | tee -a script.log
     service postgresql start
     msfdb init
 }
 
 pull_utilities(){
-    printf "  ⏳  Pull nopresearcher utilities\n"
+    printf "  ⏳  Pull nopresearcher utilities\n" | tee -a script.log
     cd /root/utils
     git clone --quiet https://github.com/nopresearcher/utilities.git
     if [[ $? != 0 ]]; then
@@ -604,22 +605,22 @@ pull_utilities(){
 }
 
 apt_cleanup(){
-    printf "  ⏳  cleaning up apt\n"
-    DEBIAN_FRONTEND=noninteractive apt-get -f install
-    apt-get -y autoremove
-    apt-get -y autoclean
-    apt-get -y clean
+    printf "  ⏳  cleaning up apt\n" | tee -a script.log
+    DEBIAN_FRONTEND=noninteractive apt-get -f install >> script.log 2>>script_error.log
+    apt-get -y autoremove >> script.log 2>>script_error.log
+    apt-get -y autoclean >> script.log 2>>script_error.log
+    apt-get -y clean >> script.log 2>>script_error.log
 }
 
 additional_clean(){
-    printf "  ⏳  additional cleaning\n"
+    printf "  ⏳  additional cleaning\n" | tee -a script.log
     cd /root # go home
     updatedb # update slocated database
     history -cw 2>/dev/null # clean history
 }
 
 manual_stuff_to_do(){
-    printf "  ⏳  Adding Manual work\n"
+    printf "  ⏳  Adding Manual work\n" | tee -a script.log
     echo "======Firefox addons=====" >> script_todo.log
     echo "FoxyProxy Standard" >> script_todo.log
     echo "" >> script_todo.log
@@ -635,7 +636,7 @@ compute_finish_time(){
 }
 
 script_todo_print() {
-    printf "  ⏳  Printing todo\n"
+    printf "  ⏳  Printing todo\n" | tee -a script.log
     cat script_todo.log
 }
 
