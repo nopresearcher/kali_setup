@@ -509,6 +509,17 @@ enable_auto_login(){
     sed -i "s/^#.*AutomaticLoginEnable/AutomaticLoginEnable/g ; s/#.*AutomaticLogin/AutomaticLogin/g" /etc/gdm3/daemon.conf
 }
 
+configure_gdb(){
+    printf "  ⏳  configure gdb\n"
+    cd /root
+    cat > .gdbinit <<-ENDOFGDB
+    # use intel assembly syntax
+    set disassembly-flavor intel
+    # follow child process if forked # change to 'parent' if you want to follow parent process after fork
+    set follow-fork-mode child
+	ENDOFGDB
+}
+
 configure_vim(){
     printf "  ⏳  configure vim\n"
     cd /root
@@ -518,8 +529,10 @@ configure_vim(){
     set shiftwidth=4
     set softtabstop=4
     set background=dark
+    # turn on code syntax
     syntax on
     set mouse=a
+    # show line numbers
     set number
 	ENDOFVIM
 }
@@ -536,6 +549,10 @@ configure_wireshark(){
     # TRUE or FALSE (case-insensitive)
     capture.auto_scroll: FALSE
 
+    # Resolve addresses to names?
+    # TRUE or FALSE (case-insensitive), or a list of address types to resolve.
+    name_resolve: FALSE
+
     # Resolve Ethernet MAC address to manufacturer names
     # TRUE or FALSE (case-insensitive)
     nameres.mac_name: FALSE
@@ -546,7 +563,19 @@ configure_wireshark(){
 
     # Capture in Pcap-NG format?
     # TRUE or FALSE (case-insensitive)
-    capture.pcap_ng: FALSE  
+    capture.pcap_ng: FALSE
+
+    # Font name for packet list, protocol tree, and hex dump panes.
+    # A string
+    gui.qt.font_name: Monospace,10,-1,5,50,0,0,0,0,0
+
+    # Resolve addresses to names?
+    # TRUE or FALSE (case-insensitive), or a list of address types to resolve.
+    name_resolve: FALSE
+
+    # Display all hidden protocol items in the packet list.
+    # TRUE or FALSE (case-insensitive)
+    protocols.display_hidden_proto_items: TRUE
 	ENDOFWIRESHARK
 }
 
@@ -649,6 +678,7 @@ main () {
     install_sourcepro_font
     configure_gnome_settings
     enable_auto_login
+    configure_gdb
     configure_vim
     configure_wireshark
     #configure_git
