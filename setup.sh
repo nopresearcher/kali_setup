@@ -85,6 +85,7 @@ install_python2_related(){
     printf "  ⏳  Installing python2 related libraries\n" | tee -a script.log
     # terminaltables - 
     # pwntools - 
+    # xortool - 
     pip -q install terminaltables pwntools xortool
 }
 
@@ -589,8 +590,8 @@ configure_git(){
 
 configure_metasploit(){
     printf "  ⏳  configure metasploit\n" | tee -a script.log
-    service postgresql start
-    msfdb init
+    service postgresql start >> script.log
+    msfdb init >> script.log
 }
 
 pull_utilities(){
