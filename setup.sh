@@ -422,6 +422,7 @@ install_chrome(){
         echo "$1 failed " >> script.log
     fi  
     dpkg -i ./google-chrome-stable_current_amd64.deb >> script.log
+    apt --fix-broken install
     rm -f ./google-chrome-stable_current_amd64.deb
     # enable chrome start as root
     cp /usr/bin/google-chrome-stable /usr/bin/google-chrome-stable.old && sed -i 's/^\(exec.*\)$/\1 --user-data-dir/' /usr/bin/google-chrome-stable
@@ -441,6 +442,16 @@ install_nmap_vulscan(){
     printf "  ⏳  Install NMAP vulscan\n" | tee -a script.log
     cd /usr/share/nmap/scripts/
     git clone --quiet https://github.com/scipag/vulscan.git
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi  
+}
+
+install_lazydocker(){
+    printf "  ⏳  Install lazydocker\n" | tee -a script.log
+    cd /root/utils
+    curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -717,6 +728,7 @@ main () {
     install_chrome
     install_chromium
     install_nmap_vulscan
+    install_lazydocker
     bash_aliases
     john_bash_completion
     unzip_rockyou
