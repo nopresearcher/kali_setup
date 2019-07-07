@@ -381,6 +381,28 @@ install_dirsearch(){
     cd /root
 }
 
+install_clicknroot(){
+    printf "  ⏳  Install ClickNRoot\n" | tee -a script.log
+    cd /root/utils
+    git clone --quiet https://github.com/evait-security/ClickNRoot.git
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+    cd /root
+}
+
+install_reptile(){
+    printf "  ⏳  Install Reptile\n" | tee -a script.log
+    cd /root/utils
+    git clone --quiet https://github.com/f0rb1dd3n/Reptile.git
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+    cd /root
+}
+
 install_chrome(){
     printf "  ⏳  Install Chrome\n" | tee -a script.log
     wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -388,7 +410,7 @@ install_chrome(){
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi  
-    apt_package_install ./google-chrome-stable_current_amd64.deb
+    dpkg -i ./google-chrome-stable_current_amd64.deb >> script.log
     rm -f ./google-chrome-stable_current_amd64.deb
     # enable chrome start as root
     cp /usr/bin/google-chrome-stable /usr/bin/google-chrome-stable.old && sed -i 's/^\(exec.*\)$/\1 --user-data-dir/' /usr/bin/google-chrome-stable
@@ -669,6 +691,8 @@ main () {
     install_stegcracker
     install_wine
     install_dirsearch
+    install_clicknroot
+    install_reptile
     install_chrome
     install_chromium
     install_nmap_vulscan
