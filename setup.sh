@@ -98,7 +98,8 @@ install_python3_related(){
     # requests - 
     # future - 
     # paramiko - 
-    pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko
+    # selenium - control chrome browser
+    pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko selenium
 }
 
 install_base_os_tools(){
@@ -201,6 +202,16 @@ folder_prep(){
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log 
     fi 
+    mkdir -p /root/ctf
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log 
+    fi 
+    mkdir -p /root/.ssh
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log 
+    fi 
 }
 
 github_desktop() {
@@ -215,7 +226,7 @@ github_desktop() {
     rm -f ./GitHubDesktop-linux*
 }
 
-vscode() {
+install_vscode() {
      printf "  ⏳  Installing VS Code\n" | tee -a script.log
     # Download the Microsoft GPG key, and convert it from OpenPGP ASCII 
     # armor format to GnuPG format
@@ -232,7 +243,7 @@ vscode() {
 
     # Update and install Visual Studio Code 
     apt_update
-    apt_package_install code
+    apt-get install -y -q code >> script.log 2>>script_error.log
 }
 
 install_rtfm(){
@@ -552,10 +563,10 @@ configure_vim(){
     set shiftwidth=4
     set softtabstop=4
     set background=dark
-    # turn on code syntax
+    " turn on code syntax
     syntax on
     set mouse=a
-    # show line numbers
+    " show line numbers
     set number
 	ENDOFVIM
 }
@@ -627,6 +638,16 @@ pull_utilities(){
     sed -i '/export PATH/s/$/\/root\/utils\/utilities:/' /root/.bashrc
 }
 
+pull_kali_setup(){
+    printf "  ⏳  Pull kali setup script\n" | tee -a script.log
+    cd /root/utils
+    git clone --quiet https://github.com/nopresearcher/kali_setup.git
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+}
+
 apt_cleanup(){
     printf "  ⏳  cleaning up apt\n" | tee -a script.log
     DEBIAN_FRONTEND=noninteractive apt-get -f install >> script.log 2>>script_error.log
@@ -679,7 +700,7 @@ main () {
     install_web_tools
     folder_prep
     github_desktop
-    vscode
+    install_vscode
     install_rtfm
     install_docker
     pull_cyberchef
@@ -710,6 +731,7 @@ main () {
     #configure_git
     configure_metasploit
     pull_utilities
+    pull_kali_setup
     apt_cleanup
     additional_clean
     manual_stuff_to_do
