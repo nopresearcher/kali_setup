@@ -227,7 +227,7 @@ github_desktop() {
 }
 
 install_vscode() {
-     printf "  ⏳  Installing VS Code\n" | tee -a script.log
+    printf "  ⏳  Installing VS Code\n" | tee -a script.log
     # Download the Microsoft GPG key, and convert it from OpenPGP ASCII 
     # armor format to GnuPG format
     curl --silent https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
@@ -244,6 +244,26 @@ install_vscode() {
     # Update and install Visual Studio Code 
     apt_update
     apt-get install -y -q code >> script.log 2>>script_error.log
+}
+
+configure_vscode() {
+    printf "  🔧  configure wireshark\n" | tee -a script.log
+    code --user-data-dir /root/.vscode --install-extension christian-kohler.path-intellisense >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension coenraads.bracket-pair-colorizer >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension eamodio.gitlens >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension ibm.output-colorizer >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension ms-azuretools.vscode-docker >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension ms-python.python >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension ms-vscode.cpptools >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension ms-vscode-remote.remote-ssh >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension ms-vscode-remote.remote-ssh-edit >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension ms-vscode-remote.remote-ssh-explorer >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension romanpeshkov.vscode-text-tables >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension shakram02.bash-beautify >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension shan.code-settings-sync >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension visualstudioexptteam.vscodeintellicode >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension vscode-icons-team.vscode-icons >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension yzhang.markdown-all-in-one >> script.log 2>>script_error.log
 }
 
 install_rtfm(){
@@ -717,6 +737,7 @@ main () {
     folder_prep
     github_desktop
     install_vscode
+    configure_vscode
     install_rtfm
     install_docker
     pull_cyberchef
