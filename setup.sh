@@ -520,7 +520,7 @@ install_sourcepro_font(){
 
 configure_gnome_settings(){
     # use "dconf watch /" then use gnome tweks to change settings and it will print below
-    printf "  ⏳  tweaking gnome settings\n" | tee -a script.log
+    printf "  🔧  tweaking gnome settings\n" | tee -a script.log
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '0'
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
@@ -550,12 +550,12 @@ configure_gnome_settings(){
 }
 
 enable_auto_login(){
-    printf "  ⏳  enabling autologin\n" | tee -a script.log
+    printf "  🔧  enabling autologin\n" | tee -a script.log
     sed -i "s/^#.*AutomaticLoginEnable/AutomaticLoginEnable/g ; s/#.*AutomaticLogin/AutomaticLogin/g" /etc/gdm3/daemon.conf
 }
 
 configure_gdb(){
-    printf "  ⏳  configure gdb\n" | tee -a script.log
+    printf "  🔧  configure gdb\n" | tee -a script.log
     cd /root
     cat > .gdbinit <<-ENDOFGDB
     # use intel assembly syntax
@@ -566,7 +566,7 @@ configure_gdb(){
 }
 
 configure_vim(){
-    printf "  ⏳  configure vim\n" | tee -a script.log
+    printf "  🔧  configure vim\n" | tee -a script.log
     cd /root
     cat > .vimrc <<-ENDOFVIM
     set tabstop=8
@@ -583,7 +583,7 @@ configure_vim(){
 }
 
 configure_wireshark(){
-    printf "  ⏳  configure wireshark\n" | tee -a script.log
+    printf "  🔧  configure wireshark\n" | tee -a script.log
     cd /root
     mkdir -p /root/.config/wireshark
     cat > /root/.config/wireshark/preferences <<-ENDOFWIRESHARK
@@ -626,14 +626,14 @@ configure_wireshark(){
 }
 
 configure_git(){
-    printf "  ⏳  Configure git username, email, name\n" | tee -a script.log
+    printf "  🔧  Configure git username, email, name\n" | tee -a script.log
     git config --global user.name "NOP Researcher"
     git config --global user.email nopresearcher@gmail.com
     git config --global credential.username "nopresearcher"
 }
 
 configure_metasploit(){
-    printf "  ⏳  configure metasploit\n" | tee -a script.log
+    printf "  🔧  configure metasploit\n" | tee -a script.log
     service postgresql start >> script.log
     msfdb init >> script.log
 }
@@ -665,7 +665,7 @@ pull_kali_setup(){
 }
 
 apt_cleanup(){
-    printf "  ⏳  cleaning up apt\n" | tee -a script.log
+    printf "  ♻  cleaning up apt\n" | tee -a script.log
     DEBIAN_FRONTEND=noninteractive apt-get -f install >> script.log 2>>script_error.log
     apt-get -y autoremove >> script.log 2>>script_error.log
     apt-get -y autoclean >> script.log 2>>script_error.log
@@ -673,7 +673,7 @@ apt_cleanup(){
 }
 
 additional_clean(){
-    printf "  ⏳  additional cleaning\n" | tee -a script.log
+    printf "  ♻  additional cleaning\n" | tee -a script.log
     cd /root # go home
     updatedb # update slocated database
     history -cw 2>/dev/null # clean history
