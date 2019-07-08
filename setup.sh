@@ -638,6 +638,11 @@ configure_metasploit(){
     msfdb init >> script.log
 }
 
+update_wpscan(){
+    printf "  ⏳  update wpscan\n" | tee -a script.log
+    wpscan --update >> script.log
+}
+
 pull_utilities(){
     printf "  ⏳  Pull nopresearcher utilities\n" | tee -a script.log
     cd /root/utils
@@ -742,6 +747,7 @@ main () {
     configure_wireshark
     #configure_git
     configure_metasploit
+    update_wpscan
     pull_utilities
     pull_kali_setup
     apt_cleanup
