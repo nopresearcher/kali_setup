@@ -422,7 +422,7 @@ install_chrome(){
         echo "$1 failed " >> script.log
     fi  
     dpkg -i ./google-chrome-stable_current_amd64.deb >> script.log
-    apt --fix-broken install
+    apt --fix-broken install -y
     rm -f ./google-chrome-stable_current_amd64.deb
     # enable chrome start as root
     cp /usr/bin/google-chrome-stable /usr/bin/google-chrome-stable.old && sed -i 's/^\(exec.*\)$/\1 --user-data-dir/' /usr/bin/google-chrome-stable
