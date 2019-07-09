@@ -582,6 +582,17 @@ configure_gdb(){
     set disassembly-flavor intel
     # follow child process if forked # change to 'parent' if you want to follow parent process after fork
     set follow-fork-mode child
+    # attempt to disassemble next line
+    set disassemble-next-line on
+    # ensure history is on
+    set history save on
+    # function to print xxd like output, xxd 0xaddress 10,  good for strings
+    define xxd
+        dump binary memory /tmp/dump.bin $arg0 $arg0+$arg1
+        eval "shell xxd -o %p /tmp/dump.bin", $arg0
+    end
+    # load peda
+    source /root/utils/peda/peda.py
 	ENDOFGDB
 }
 
