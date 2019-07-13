@@ -66,7 +66,7 @@ kali_metapackages() {
     printf "  ⏳  install Kali metapackages\n" | tee -a script.log
     for package in kali-linux-forensic kali-linux-pwtools kali-linux-rfid kali-linux-sdr kali-linux-voip kali-linux-web kali-linux-wireless forensics-all
     do
-        apt_package_install $package
+        apt-get install -y -q $package >> script.log 2>>script_error.log
     done
 }
 
@@ -123,7 +123,7 @@ install_base_os_tools(){
     # git-sizer - detailed size information on git repos
     for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace gnome-screenshot sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer
     do
-        apt_package_install $package
+        apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
 }
 
@@ -133,7 +133,7 @@ install_usb_gps(){
     # gpsd-clients - communicate with gpsd and utilities
     for package in gpsd gpsd-clients
     do
-        apt_package_install $package
+        apt-get install -y -q $package >> script.log 2>>script_error.log
     done
 }
 
@@ -144,7 +144,7 @@ install_re_tools(){
     # hexcurse - 
     for package in exiftool okteta hexcurse
     do
-        apt_package_install $package
+        apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
 }
 
@@ -155,7 +155,7 @@ install_exploit_tools(){
     # crackmapexec - pass the hash
     for package in gcc-multilib mingw-w64 crackmapexec
     do
-        apt_package_install $package
+        apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
 }
 
@@ -166,7 +166,7 @@ install_steg_programs(){
     # steghide-doc - documentation for steghide
     for package in stegosuite steghide steghide-doc  
     do
-        apt_package_install $package
+        apt-get install -y -q $package >> script.log 2>>script_error.log
     done
 }
 
@@ -175,7 +175,7 @@ install_web_tools(){
     # gobuster - directory brute forcer
     for package in gobuster
     do
-        apt_package_install $package
+        apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
 }
 
