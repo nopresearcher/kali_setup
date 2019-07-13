@@ -375,7 +375,7 @@ install_routersploit_framework(){
     fi  
     cd routersploit
     python3 -m pip install -q -r requirements.txt
-    sed -i '/export PATH/s/$/\/root\/utils\/routersploit:/' /root/.bashrc
+    ln -s /root/utils/routersploit/rsf.py /usr/local/bin/rsf.py
     cd ~
 }
 
@@ -409,6 +409,7 @@ install_dirsearch(){
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi
+    ln -s /root/utils/dirsearch/dirsearch.py /usr/local/bin/dirsearch.py
     cd /root
 }
 
