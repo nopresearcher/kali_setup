@@ -275,7 +275,7 @@ install_rtfm(){
     fi
     chmod +x /opt/rtfm/rtfm.py
     /opt/rtfm/rtfm.py -u >> script.log 2>&1
-    sed -i '/export PATH/s/$/\/opt\/rtfm:/' /root/.bashrc
+    ln -s /opt/rtfm/rtfm.py /usr/local/bin/rtfm.py
 }
 
 install_docker(){
@@ -324,7 +324,7 @@ install_ghidra(){
         echo "$1 failed " >> script.log
     fi  
     unzip -qq ghidra*
-    sed -i '/export PATH/s/$/\/root\/utils\/ghidra_9.0:/' /root/.bashrc
+    ln -s /root/utils/ghidra_9.0.4/ghidraRun /usr/local/bin/ghidraRun
     rm ghidra*.zip
 }
 
@@ -361,7 +361,7 @@ install_binary_ninja(){
     fi  
     unzip -qq BinaryNinja-demo.zip
     rm BinaryNinja-demo.zip
-    sed -i '/export PATH/s/$/\/root\/utils\/binaryninja:/' /root/.bashrc
+    ln -s /root/utils/binaryninja/binaryninja /usr/local/bin/binaryninja
     cd ~
 }
 
@@ -486,8 +486,6 @@ bash_aliases() {
     echo "alias ga='git add -A'" >> /root/.bashrc
     # increase history size
     sed -i "s/HISTSIZE=1000/HISTSIZE=1000000/g" /root/.bashrc
-    # establish path baseline
-    echo "export PATH=$PATH:" >> /root/.bashrc
 }
 
 john_bash_completion() {
@@ -691,7 +689,11 @@ pull_utilities(){
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi
-    sed -i '/export PATH/s/$/\/root\/utils\/utilities:/' /root/.bashrc
+    ln -s /root/utils/utilities/serveme /usr/local/bin/serveme
+    ln -s /root/utils/utilities/ips /usr/local/bin/ips
+    ln -s /root/utils/utilities/revshell-php /usr/local/bin/revshell-php
+    ln -s /root/utils/utilities/public /usr/local/bin/public
+
 }
 
 pull_kali_setup(){
