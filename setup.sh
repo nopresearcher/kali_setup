@@ -613,6 +613,14 @@ configure_vim(){
 	ENDOFVIM
 }
 
+configure_gedit(){
+    printf "  🔧  configure gedit\n" | tee -a script.log
+    # show line numbers
+    gsettings set org.gnome.gedit.preferences.editor display-line-numbers true
+    # set theme to match the rest of dark themes
+    gsettings set org.gnome.gedit.preferences.editor scheme oblivion
+}
+
 configure_wireshark(){
     printf "  🔧  configure wireshark\n" | tee -a script.log
     cd /root
@@ -776,6 +784,7 @@ main () {
     enable_auto_login
     configure_gdb
     configure_vim
+    configure_gedit
     configure_wireshark
     #configure_git
     configure_metasploit
