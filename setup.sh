@@ -15,6 +15,9 @@
 # systemctl enable sshd
 # sed sshd_config for permit root login and password, x11 forwarding, etc
 # systemctl restart sshd
+# /usr/bin/script --append --flush --timing=timing_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log" terminal_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log"
+# pip3 list --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install --upgrade
+# pip list --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install --upgrade
 
 # set colors
 RED='\033[0;31m'
@@ -47,6 +50,10 @@ compute_start_time(){
     echo "\n\n Install started - $start_time \n" >> script.log
 }
 
+configure_environment(){
+    echo "HISTTIMEFORMAT='%m/%d/%y %T '" >> /root/.bashrc
+}
+
 apt_update() {
     printf "  ⏳  apt-get update\n" | tee -a script.log
     apt-get update -qq >> script.log 2>>script_error.log
@@ -59,7 +66,7 @@ apt_upgrade() {
 
 apt_package_install() {
     echo "\n [+] installing $1 via apt-get\n" >> script.log
-    apt-get install -y -qq --print-uris $1 >> script.log 2>>script_error.log
+    apt-get install -y -q $1 >> script.log 2>>script_error.log
 }
 
 kali_metapackages() {
@@ -99,7 +106,7 @@ install_python3_related(){
     # future - 
     # paramiko - 
     # selenium - control chrome browser
-    pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko selenium
+    pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko selenium awscli
 }
 
 install_base_os_tools(){
@@ -137,6 +144,17 @@ install_usb_gps(){
     done
 }
 
+install_rf_tools(){
+    printf "  ⏳  Installing tools for rf tools like hackrf\n" | tee -a script.log
+    # hackrf - for hackrf device
+    # libhackrf-dev - development library for hackrf - firmware upgrades
+    # libhackrf0 - library for hackrf
+    for package in hackrf libhackrf-dev libhackrf0
+    do
+        apt-get install -y -q $package >> script.log 2>>script_error.log
+    done
+}
+
 install_re_tools(){
     printf "  ⏳  Installing re programs\n" | tee -a script.log
     # exiftool - 
@@ -164,7 +182,8 @@ install_steg_programs(){
     # stegosuite - steganography
     # steghide - steganography
     # steghide-doc - documentation for steghide
-    for package in stegosuite steghide steghide-doc  
+    # audacity - sound editor / spectogram
+    for package in stegosuite steghide steghide-doc audacity
     do
         apt-get install -y -q $package >> script.log 2>>script_error.log
     done
@@ -208,6 +227,11 @@ folder_prep(){
         echo "$1 failed " >> script.log 
     fi 
     mkdir -p /root/.ssh
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log 
+    fi
+    mkdir -p /root/history
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log 
@@ -744,6 +768,7 @@ script_todo_print() {
 
 main () {
     compute_start_time
+    configure_environment
     apt_update
     #apt_upgrade
     kali_metapackages
@@ -752,6 +777,7 @@ main () {
     install_python3_related
     install_base_os_tools
     install_usb_gps
+    install_rf_tools
     install_re_tools
     install_exploit_tools
     install_steg_programs
