@@ -4,17 +4,10 @@
 
 # run update and upgrade, before running script
 # apt update && apt upgrade -y
-# curl -L --silent https://bit.ly/320yIij | bash
+## curl -L --silent https://bit.ly/31BE8PI | bash
 #
-# you may want to modify a few things like:
-# configure_git
-# configure_vim
-# configure_wireshark
 #
 # TODO 
-# systemctl enable sshd
-# sed sshd_config for permit root login and password, x11 forwarding, etc
-# systemctl restart sshd
 # /usr/bin/script --append --flush --timing=timing_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log" terminal_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log"
 # pip3 list --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install --upgrade
 # pip list --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install --upgrade
@@ -71,7 +64,7 @@ apt_package_install() {
 
 kali_metapackages() {
     printf "  ⏳  install Kali metapackages\n" | tee -a script.log
-    for package in kali-linux-forensic kali-linux-pwtools kali-linux-rfid kali-linux-sdr kali-linux-voip kali-linux-web kali-linux-wireless forensics-all
+    for package in kali-linux-forensic kali-linux-pwtools kali-linux-web kali-linux-wireless forensics-all
     do
         apt-get install -y -q $package >> script.log 2>>script_error.log
     done
@@ -132,27 +125,6 @@ install_base_os_tools(){
     do
         apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
-}
-
-install_usb_gps(){
-    printf "  ⏳  Installing gpsd for USB GPS Receivers\n" | tee -a script.log
-    # gpsd - daemon for USB GPS device
-    # gpsd-clients - communicate with gpsd and utilities
-    for package in gpsd gpsd-clients
-    do
-        apt-get install -y -q $package >> script.log 2>>script_error.log
-    done
-}
-
-install_rf_tools(){
-    printf "  ⏳  Installing tools for rf tools like hackrf\n" | tee -a script.log
-    # hackrf - for hackrf device
-    # libhackrf-dev - development library for hackrf - firmware upgrades
-    # libhackrf0 - library for hackrf
-    for package in hackrf libhackrf-dev libhackrf0
-    do
-        apt-get install -y -q $package >> script.log 2>>script_error.log
-    done
 }
 
 install_re_tools(){
@@ -325,20 +297,6 @@ install_docker(){
     fi
 }
 
-pull_cyberchef(){
-    printf "  ⏳  Install cyberchef docker container\n" | tee -a script.log
-    docker pull remnux/cyberchef >> script.log 2>>script_error.log
-    if [[ $? != 0 ]]; then
-	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
-        echo "$1 failed " >> script.log
-    fi
-    echo "# Run docker cyberchef" >> script_todo.log  
-    echo "# docker run -d -p 8080:8080 remnux/cyberchef" >> script_todo.log  
-    echo "# http://localhost:8080/" >> script_todo.log  
-    echo "# docker ps" >> script_todo.log  
-    echo "# docker stop <container id>" >> script_todo.log  
-}
-
 install_ghidra(){
     printf "  ⏳  Install Ghidra\n" | tee -a script.log
     cd /root/utils
@@ -350,43 +308,6 @@ install_ghidra(){
     unzip -qq ghidra*
     ln -s /root/utils/ghidra_9.0.4/ghidraRun /usr/local/bin/ghidraRun
     rm ghidra*.zip
-}
-
-install_peda() {
-    printf "  ⏳  Install Python Exploit Development Assistance\n" | tee -a script.log
-    cd /root/utils
-    git clone --quiet https://github.com/longld/peda.git ~/peda
-    if [[ $? != 0 ]]; then
-	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
-        echo "$1 failed " >> script.log
-    fi  
-    echo "source /root/utils/peda/peda.py" >> ~/.gdbinit
-}
-
-install_gef(){
-    printf "  ⏳  Install GDB Enhanced Features - similar to peda\n" | tee -a script.log
-    cd /root/utils
-    wget -O ~/.gdbinit-gef.py -q https://github.com/hugsy/gef/raw/master/gef.py
-    if [[ $? != 0 ]]; then
-	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
-        echo "$1 failed " >> script.log
-    fi  
-    echo source /root/utils/.gdbinit-gef.py >> ~/.gdbinit
-    cd ~
-}
-
-install_binary_ninja(){
-    printf "  ⏳  Install binary ninja\n" | tee -a script.log
-    cd /root/utils
-    wget --quiet https://cdn.binary.ninja/installers/BinaryNinja-demo.zip
-    if [[ $? != 0 ]]; then
-	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
-        echo "$1 failed " >> script.log
-    fi  
-    unzip -qq BinaryNinja-demo.zip
-    rm BinaryNinja-demo.zip
-    ln -s /root/utils/binaryninja/binaryninja /usr/local/bin/binaryninja
-    cd ~
 }
 
 install_routersploit_framework(){
@@ -528,97 +449,6 @@ unzip_rockyou(){
     cd /root
 }
 
-enable_vbox_clipboard(){
-    printf "  ⏳  enable vbox clipboard support\n" | tee -a script.log
-    echo "# Enable VirtualBox Clipboard" >> /root/.bashrc
-    echo "VBoxClient --clipboard" >> /root/.bashrc
-}
-
-install_gnome_theme(){
-    printf "  ⏳  install gnome tweak packages & custom theme\n" | tee -a script.log
-    apt_package_install gtk2-engines-murrine 
-    apt_package_install gtk2-engines-pixbuf
-    cd ~
-    git clone --quiet https://github.com/vinceliuice/vimix-gtk-themes
-    if [[ $? != 0 ]]; then
-	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
-        echo "$1 failed " >> script.log
-    fi
-    cd vimix-gtk-themes
-    ./Install -n vimix -c dark -t beryl >> script.log 2>>script_error.log
-    if [[ $? != 0 ]]; then
-	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
-        echo "$1 failed " >> script.log
-    fi
-}
-
-install_sourcepro_font(){
-    printf "  ⏳  install sourcepro font\n" | tee -a script.log
-    cd /root
-    curl --silent --output google-mono-source.zip https://fonts.google.com/download?family=Source%20Code%20Pro >> script.log 2>>script_error.log
-    7z x google-mono-source.zip >> script.log
-    mv SourceCodePro-* /usr/share/fonts
-    rm google-mono-source.zip
-}
-
-configure_gnome_settings(){
-    # use "dconf watch /" then use gnome tweks to change settings and it will print below
-    printf "  🔧  tweaking gnome settings\n" | tee -a script.log
-    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
-    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout '0'
-    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
-    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout '0'
-    gsettings set org.gnome.desktop.session idle-delay '0'
-    gsettings set org.gnome.desktop.screensaver lock-enabled false
-    gsettings set org.gnome.desktop.interface enable-animations false
-    # set dark theme
-    dconf write /org/gnome/desktop/interface/icon-theme "'Zen-Kali-Dark'"
-    dconf write /org/gnome/desktop/interface/gtk-theme "'vimix-dark-laptop-beryl'"
-    dconf write /org/gnome/shell/extensions/user-theme/name "'vimix-dark-laptop-beryl'"
-    # set scaling for tiny fonts
-    dconf write /org/gnome/desktop/interface/text-scaling-factor 0.79999999999999982
-    # set more detailed date/time
-    dconf write /org/gnome/desktop/interface/clock-show-seconds true
-    dconf write /org/gnome/desktop/interface/clock-show-date true
-    dconf write /org/gnome/desktop/interface/clock-show-weekday true
-    # set font
-    dconf write /org/gnome/desktop/interface/monospace-font-name "'Source Code Pro 11'"
-    # set cursor focus
-    dconf write /org/gnome/desktop/wm/preferences/focus-mode "'sloppy'"
-    # show trash icon
-    # show application windows at bottom
-    dconf write /org/gnome/shell/enabled-extensions "['apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'workspace-indicator@gnome-shell-extensions.gcampax.github.com', 'dash-to-dock@micxgx.gmail.com', 'ProxySwitcher@flannaghan.com', 'EasyScreenCast@iacopodeenosee.gmail.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'desktop-icons@csoriano', 'window-list@gnome-shell-extensions.gcampax.github.com']"
-    # fix application menu width
-    sed -i "s/this.categoriesBox.box.width = 275;/this.mainBox.box.width = 900;\\n\\tthis.categoriesBox.box.width = 500;/g" /usr/share/gnome-shell/extensions/apps-menu@gnome-shell-extensions.gcampax.github.com/extension.js
-}
-
-enable_auto_login(){
-    printf "  🔧  enabling autologin\n" | tee -a script.log
-    sed -i "s/^#.*AutomaticLoginEnable/AutomaticLoginEnable/g ; s/#.*AutomaticLogin/AutomaticLogin/g" /etc/gdm3/daemon.conf
-}
-
-configure_gdb(){
-    printf "  🔧  configure gdb\n" | tee -a script.log
-    cd /root
-    cat > .gdbinit <<-ENDOFGDB
-    # use intel assembly syntax
-    set disassembly-flavor intel
-    # follow child process if forked # change to 'parent' if you want to follow parent process after fork
-    set follow-fork-mode child
-    # attempt to disassemble next line
-    set disassemble-next-line on
-    # ensure history is on
-    set history save on
-    # function to print xxd like output, xxd 0xaddress 10,  good for strings
-    define xxd
-        dump binary memory /tmp/dump.bin $arg0 $arg0+$arg1
-        eval "shell xxd -o %p /tmp/dump.bin", $arg0
-    end
-    # load peda
-    source /root/utils/peda/peda.py
-	ENDOFGDB
-}
-
 configure_vim(){
     printf "  🔧  configure vim\n" | tee -a script.log
     cd /root
@@ -750,9 +580,6 @@ manual_stuff_to_do(){
     echo "======Firefox addons=====" >> script_todo.log
     echo "FoxyProxy Standard" >> script_todo.log
     echo "" >> script_todo.log
-    echo "======Password=====" >> script_todo.log
-    echo "CHANGE YO PASSWORD" >> script_todo.log
-    echo "passwd root" >> script_todo.log
 }
 
 compute_finish_time(){
@@ -776,9 +603,9 @@ main () {
     install_python2_related
     install_python3_related
     install_base_os_tools
-    install_usb_gps
-    install_rf_tools
-    install_re_tools
+    #install_usb_gps
+    #install_rf_tools
+    #install_re_tools
     install_exploit_tools
     install_steg_programs
     install_web_tools
@@ -788,11 +615,11 @@ main () {
     configure_vscode
     install_rtfm
     install_docker
-    pull_cyberchef
+    #pull_cyberchef
     install_ghidra
-    install_peda
+    #install_peda
     #install_gef
-    install_binary_ninja
+    #install_binary_ninja
     install_routersploit_framework
     install_stegcracker
     install_wine
@@ -807,11 +634,11 @@ main () {
     john_bash_completion
     unzip_rockyou
     #enable_vbox_clipboard
-    install_gnome_theme
-    install_sourcepro_font
-    configure_gnome_settings
-    enable_auto_login
-    configure_gdb
+    #install_gnome_theme
+    #install_sourcepro_font
+    #configure_gnome_settings
+    #enable_auto_login
+    #configure_gdb
     configure_vim
     configure_gedit
     configure_wireshark
