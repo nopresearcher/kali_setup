@@ -15,9 +15,13 @@
 # systemctl enable sshd
 # sed sshd_config for permit root login and password, x11 forwarding, etc
 # systemctl restart sshd
-# /usr/bin/script --append --flush --timing=timing_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log" terminal_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log"
+# /usr/bin/script --append --flush --timing=/root/history/timing_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log" /root/history/terminal_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log"
 # pip3 list --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install --upgrade
 # pip list --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install --upgrade
+# gsettings set org.gnome.desktop.background picture-uri '/root/utils/kali_setup/media/wallpaper/dark-kali-2560-1600.png'
+# git@github.com:mbahadou/postenum.git - postenumeration script
+# git@github.com:j3ssie/Osmedeus.git - web scanning framework with local web server
+
 
 # set colors
 RED='\033[0;31m'
@@ -106,7 +110,11 @@ install_python3_related(){
     # future - 
     # paramiko - 
     # selenium - control chrome browser
-    pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko selenium awscli
+    # awscli - 
+    # ansible - 
+    # urh - universal radio hacker
+    # pymodbus - python REPL for interacting with modbus devices
+    pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko selenium awscli ansible urh pymodbus
 }
 
 install_base_os_tools(){
@@ -128,7 +136,7 @@ install_base_os_tools(){
     # jq - cli json processor
     # aria2 - CLI download manager with torrent and http resume support
     # git-sizer - detailed size information on git repos
-    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace gnome-screenshot sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer
+    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace gnome-screenshot sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer cython3 python3-psutil python3-pyqt5 python3-zmq
     do
         apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
@@ -193,6 +201,15 @@ install_web_tools(){
     printf "  ⏳  Installing web programs\n" | tee -a script.log
     # gobuster - directory brute forcer
     for package in gobuster
+    do
+        apt-get install -y -q $package >> script.log 2>>script_error.log
+    done 
+}
+
+install_mobile_tools(){
+    printf "  ⏳  Installing web programs\n" | tee -a script.log
+    # dex2jar - 
+    for package in dex2jar
     do
         apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
@@ -459,6 +476,16 @@ install_reptile(){
     cd /root
 }
 
+install_ctfdscraper() {
+    printf "  ⏳  Install CTFD Scraper\n" | tee -a script.log
+    cd /root/utils
+    git clone --quiet https://github.com/ichinano/CTFdScraper.git
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+}
+
 install_chrome(){
     printf "  ⏳  Install Chrome\n" | tee -a script.log
     wget --quiet https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -585,6 +612,13 @@ configure_gnome_settings(){
     dconf write /org/gnome/desktop/interface/monospace-font-name "'Source Code Pro 11'"
     # set cursor focus
     dconf write /org/gnome/desktop/wm/preferences/focus-mode "'sloppy'"
+    # automatically empty trash and temp files after 7 days; reduce recent file history
+    dconf write /org/gnome/desktop/privacy/recent-files-max-age "'30'"
+    dconf write /org/gnome/desktop/privacy/remove-old-trash-files "'true'"
+    dconf write /org/gnome/desktop/privacy/remove-old-temp-files "'true'"
+    dconf write /org/gnome/desktop/privacy/old-files-age "'uint32 7'"
+    # configure favorites side bar
+    dconf write /org/gnome/shell/favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'firefox-esr.desktop', 'kali-burpsuite.desktop', 'zenmap-root.desktop', 'kali-msfconsole.desktop', 'code.desktop']"
     # show trash icon
     # show application windows at bottom
     dconf write /org/gnome/shell/enabled-extensions "['apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'workspace-indicator@gnome-shell-extensions.gcampax.github.com', 'dash-to-dock@micxgx.gmail.com', 'ProxySwitcher@flannaghan.com', 'EasyScreenCast@iacopodeenosee.gmail.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'desktop-icons@csoriano', 'window-list@gnome-shell-extensions.gcampax.github.com']"
@@ -782,6 +816,7 @@ main () {
     install_exploit_tools
     install_steg_programs
     install_web_tools
+    install_mobile_tools
     folder_prep
     github_desktop
     install_vscode
@@ -799,6 +834,7 @@ main () {
     install_dirsearch
     install_clicknroot
     install_reptile
+    install_ctfdscraper
     install_chrome
     install_chromium
     install_nmap_vulscan
