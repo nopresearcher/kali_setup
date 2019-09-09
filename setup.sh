@@ -12,6 +12,7 @@
 # configure_wireshark
 #
 # TODO 
+# change /etc/resolv.conf to 8.8.8.8
 # systemctl enable sshd
 # sed sshd_config for permit root login and password, x11 forwarding, etc
 # systemctl restart sshd
@@ -305,6 +306,11 @@ configure_vscode() {
     code --user-data-dir /root/.vscode --install-extension visualstudioexptteam.vscodeintellicode >> script.log 2>>script_error.log
     code --user-data-dir /root/.vscode --install-extension vscode-icons-team.vscode-icons >> script.log 2>>script_error.log
     code --user-data-dir /root/.vscode --install-extension yzhang.markdown-all-in-one >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension bibhasdn.unique-lines >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension wix.vscode-import-cost >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension aaron-bond.better-comments >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension formulahendry.auto-rename-tag >> script.log 2>>script_error.log
+    code --user-data-dir /root/.vscode --install-extension emilast.logfilehighlighter >> script.log 2>>script_error.log
 }
 
 install_rtfm(){
