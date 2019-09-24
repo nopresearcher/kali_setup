@@ -834,6 +834,7 @@ main () {
     install_steg_programs
     install_web_tools
     install_mobile_tools
+    install_screencast_tools
     folder_prep
     github_desktop
     install_vscode
