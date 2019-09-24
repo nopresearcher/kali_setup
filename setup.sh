@@ -216,6 +216,17 @@ install_mobile_tools(){
     done 
 }
 
+install_screencast_tools(){
+    printf "  ⏳  Installing web programs\n" | tee -a script.log
+    # ffmpeg - video codec support
+    # ffmpeg-doc - documentation for ffmpeg
+    # obs-studio - screen recording, streaming software
+    for package in ffmpeg ffmpeg-doc
+    do
+        apt-get install -y -q $package >> script.log 2>>script_error.log
+    done 
+}
+
 folder_prep(){
     # create folders for later installs and workflow
     printf "  ⏳  making directories\n" | tee -a script.log
