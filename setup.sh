@@ -115,7 +115,8 @@ install_python3_related(){
     # ansible - 
     # urh - universal radio hacker
     # pymodbus - python REPL for interacting with modbus devices
-    pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko selenium awscli ansible urh pymodbus
+    # htbcli - hack the box cli
+    pip3 -q install pipenv pysmb pycryptodome pysnmp requests future paramiko selenium awscli ansible urh pymodbus htbcli
 }
 
 install_base_os_tools(){
@@ -369,6 +370,20 @@ pull_cyberchef(){
     echo "# Run docker cyberchef" >> script_todo.log  
     echo "# docker run -d -p 8080:8080 remnux/cyberchef" >> script_todo.log  
     echo "# http://localhost:8080/" >> script_todo.log  
+    echo "# docker ps" >> script_todo.log  
+    echo "# docker stop <container id>" >> script_todo.log  
+}
+
+pull_jsdetox(){
+    printf "  ⏳  Install cyberchef docker container\n" | tee -a script.log
+    docker pull remnux/jsdetox >> script.log 2>>script_error.log
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+    echo "# Run docker jsdetox" >> script_todo.log  
+    echo "# docker run --rm -p 3000:3000 remnux/jsdetox" >> script_todo.log  
+    echo "# http://localhost:3000/" >> script_todo.log  
     echo "# docker ps" >> script_todo.log  
     echo "# docker stop <container id>" >> script_todo.log  
 }
@@ -842,6 +857,7 @@ main () {
     install_rtfm
     install_docker
     pull_cyberchef
+    pull_jsdetox
     install_ghidra
     install_peda
     #install_gef
