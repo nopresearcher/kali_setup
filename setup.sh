@@ -101,6 +101,10 @@ install_python2_related(){
     pip -q install terminaltables pwntools xortool
 }
 
+install_python3_pip(){
+    apt-get install -y -q python3-pip >> script.log 2>>script_error.log
+}
+
 install_python3_related(){
     printf "  ⏳  Installing python3 related libraries\n" | tee -a script.log
     # pipenv - python virtual environments
@@ -126,7 +130,6 @@ install_base_os_tools(){
     # openresolv - 
     # strace - 
     # ltrace - 
-    # gnome-screenshot - 
     # sshfs - mount file system over ssh
     # nfs-common - 
     # open-vm-tools-desktop - for vmware intergration
@@ -138,7 +141,8 @@ install_base_os_tools(){
     # jq - cli json processor
     # aria2 - CLI download manager with torrent and http resume support
     # git-sizer - detailed size information on git repos
-    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace gnome-screenshot sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer cython3 python3-psutil python3-pyqt5 python3-zmq
+    # libappindicator3-1 - support library for google chrome
+    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer cython3 python3-psutil python3-pyqt5 python3-zmq libappinidcaor3-1
     do
         apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
@@ -271,7 +275,7 @@ folder_prep(){
 github_desktop() {
     printf "  ⏳  Github desktop - fork for linux https://github.com/shiftkey/desktop/releases\n" | tee -a script.log
     cd /root/Downloads
-    wget --quiet https://github.com/shiftkey/desktop/releases/download/release-1.6.6-linux2/GitHubDesktop-linux-1.6.6-linux2.deb
+    wget --quiet https://github.com/shiftkey/desktop/releases/download/release-2.1.0-linux1/GitHubDesktop-linux-2.1.0-linux1.deb    
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -391,13 +395,13 @@ pull_jsdetox(){
 install_ghidra(){
     printf "  ⏳  Install Ghidra\n" | tee -a script.log
     cd /root/utils
-    wget --quiet https://www.ghidra-sre.org/ghidra_9.0.4_PUBLIC_20190516.zip
+    wget --quiet https://www.ghidra-sre.org/ghidra_9.1_PUBLIC_20191023.zip    
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
     fi  
     unzip -qq ghidra*
-    ln -s /root/utils/ghidra_9.0.4/ghidraRun /usr/local/bin/ghidraRun
+    ln -s /root/utils/ghidra_9.1*/ghidraRun /usr/local/bin/ghidraRun
     rm ghidra*.zip
 }
 
@@ -555,7 +559,7 @@ install_nmap_vulscan(){
 install_lazydocker(){
     printf "  ⏳  Install lazydocker\n" | tee -a script.log
     cd /root/utils
-    curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+    curl --silent https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
     if [[ $? != 0 ]]; then
 	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
         echo "$1 failed " >> script.log
@@ -840,6 +844,7 @@ main () {
     kali_metapackages
     install_kernel_headers
     install_python2_related
+    install_python3_pip
     install_python3_related
     install_base_os_tools
     install_usb_gps
@@ -877,13 +882,13 @@ main () {
     john_bash_completion
     unzip_rockyou
     #enable_vbox_clipboard
-    install_gnome_theme
+    #install_gnome_theme
     install_sourcepro_font
-    configure_gnome_settings
+    #configure_gnome_settings
     enable_auto_login
     configure_gdb
     configure_vim
-    configure_gedit
+    #configure_gedit
     configure_wireshark
     #configure_git
     configure_metasploit
