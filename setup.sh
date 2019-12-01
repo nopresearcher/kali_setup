@@ -102,6 +102,7 @@ install_python2_related(){
 }
 
 install_python3_pip(){
+    printf "  ⏳  Installing python3-pip for python3 libraries\n" | tee -a script.log
     apt-get install -y -q python3-pip >> script.log 2>>script_error.log
 }
 
