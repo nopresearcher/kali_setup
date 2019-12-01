@@ -874,8 +874,8 @@ main () {
     install_clicknroot
     install_reptile
     install_ctfdscraper
-    install_chrome
-    install_chromium
+    #install_chrome
+    #install_chromium
     install_nmap_vulscan
     install_lazydocker
     bash_aliases
