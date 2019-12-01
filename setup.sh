@@ -142,7 +142,7 @@ install_base_os_tools(){
     # aria2 - CLI download manager with torrent and http resume support
     # git-sizer - detailed size information on git repos
     # libappindicator3-1 - support library for google chrome
-    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer cython3 python3-psutil python3-pyqt5 python3-zmq libappinidcaor3-1
+    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer cython3 python3-psutil python3-pyqt5 python3-zmq libappinidcator3-1
     do
         apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
