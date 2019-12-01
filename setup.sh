@@ -22,7 +22,7 @@
 # gsettings set org.gnome.desktop.background picture-uri '/root/utils/kali_setup/media/wallpaper/dark-kali-2560-1600.png'
 # git@github.com:mbahadou/postenum.git - postenumeration script
 # git@github.com:j3ssie/Osmedeus.git - web scanning framework with local web server
-
+# for loop for python packages in case one errors out
 
 # set colors
 RED='\033[0;31m'
