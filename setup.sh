@@ -791,6 +791,14 @@ pull_utilities(){
 
 }
 
+configure_eth0(){
+    printf " ⏳ adding eth0 dhcp\n" | tee -a script.log
+    echo "auto eth0" >> /etc/network/interfaces
+    echo "allow-hotplug eth0" >> /etc/network/interfaces
+    echo "iface eth0 inet dhcp" >> /etc/network/interfaces
+    service networking restart
+}
+
 pull_kali_setup(){
     printf "  ⏳  Pull kali setup script\n" | tee -a script.log
     cd /root/utils
@@ -895,6 +903,7 @@ main () {
     configure_metasploit
     update_wpscan
     pull_utilities
+    configure_eth0
     pull_kali_setup
     apt_cleanup
     additional_clean
