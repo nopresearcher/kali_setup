@@ -674,6 +674,34 @@ enable_auto_login_lightdm(){
     sed -i "s/^#.*autologin-guest=false/autologin-guest=false/g ; s/#.*autologin-user=user/autologin-user=root/g ; s/#.*autologin-user-timeout=0/autologin-user-timeout=0/g" /etc/lightdm/lightdm.conf
 }
 
+configure_vmware_tools_share(){
+    cat > /usr/local/sbin/mount-shared-folders <<-ENDOFVM
+    #!/bin/sh
+    vmware-hgfsclient | while read folder; do
+        vmwpath="/mnt/hgfs/\${folder}"
+        echo "[i] Mounting \${folder}   (\${vmwpath})"
+        sudo mkdir -p "\${vmwpath}"
+        sudo umount -f "\${vmwpath}" 2>/dev/null
+        sudo vmhgfs-fuse -o allow_other -o auto_unmount ".host:/\${folder}" "\${vmwpath}"
+    done
+    sleep 2s
+    ENDOFVM
+    sudo chmod +x /usr/local/sbin/mount-shared-folders
+}
+
+configure_vmware_tools_restart(){
+    cat > /usr/local/sbin/restart-vm-tools <<-ENDOFVMWARE
+    #!/bin/sh
+    systemctl stop run-vmblock\\\\x2dfuse.mount
+    sudo killall -q -w vmtoolsd
+    systemctl start run-vmblock\\\\x2dfuse.mount
+    systemctl enable run-vmblock\\\\x2dfuse.mount
+    sudo vmware-user-suid-wrapper vmtoolsd -n vmusr 2>/dev/null
+    sudo vmtoolsd -b /var/run/vmroot 2>/dev/null
+    ENDOFVMWARE
+    sudo chmod +x /usr/local/sbin/restart-vm-tools
+}
+
 configure_gdb(){
     printf "  🔧  configure gdb\n" | tee -a script.log
     cd /root
@@ -902,6 +930,8 @@ main () {
     #configure_gnome_settings
     #enable_auto_login_gnome
     enable_auto_login_lightdm
+    configure_vmware_tools_share
+    configure_vmware_tools_restart
     configure_gdb
     configure_vim
     #configure_gedit
