@@ -663,9 +663,15 @@ configure_gnome_settings(){
     sed -i "s/this.categoriesBox.box.width = 275;/this.mainBox.box.width = 900;\\n\\tthis.categoriesBox.box.width = 500;/g" /usr/share/gnome-shell/extensions/apps-menu@gnome-shell-extensions.gcampax.github.com/extension.js
 }
 
-enable_auto_login(){
+enable_auto_login_gnome(){
     printf "  🔧  enabling autologin\n" | tee -a script.log
     sed -i "s/^#.*AutomaticLoginEnable/AutomaticLoginEnable/g ; s/#.*AutomaticLogin/AutomaticLogin/g" /etc/gdm3/daemon.conf
+}
+
+
+enable_auto_login_lightdm(){
+    printf "  🔧  enabling autologin\n" | tee -a script.log
+    sed -i "s/^#.*autologin-guest=false/autologin-guest=false/g ; s/#.*autologin-user=user/autologin-user=root/g ; s/#.*autologin-user-timeout=0/autologin-user-timeout=0/g" /etc/lightdm/lightdm.conf
 }
 
 configure_gdb(){
@@ -894,7 +900,8 @@ main () {
     #install_gnome_theme
     install_sourcepro_font
     #configure_gnome_settings
-    enable_auto_login
+    #enable_auto_login_gnome
+    enable_auto_login_lightdm
     configure_gdb
     configure_vim
     #configure_gedit
