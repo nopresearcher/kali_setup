@@ -672,6 +672,8 @@ enable_auto_login_gnome(){
 enable_auto_login_lightdm(){
     printf "  🔧  enabling autologin\n" | tee -a script.log
     sed -i "s/^#.*autologin-guest=false/autologin-guest=false/g ; s/#.*autologin-user=user/autologin-user=root/g ; s/#.*autologin-user-timeout=0/autologin-user-timeout=0/g" /etc/lightdm/lightdm.conf
+    # prevent screen lock
+    sed -i '$ a Hidden=true' /etc/xdg/autostart/light-locker.desktop
 }
 
 configure_vmware_tools_share(){
