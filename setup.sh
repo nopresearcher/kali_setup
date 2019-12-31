@@ -734,12 +734,26 @@ configure_vim(){
     set expandtab
     set shiftwidth=4
     set softtabstop=4
-    set background=dark
-    " turn on code syntax
-    syntax on
+    set background=dark " Enable dark background within editing are and syntax highlighting
+    syntax on   " turn on code syntax highlighting
     set mouse=a
-    " show line numbers
-    set number
+    set number  " show line numbers
+    set ttyfast		" Make the keyboard fast
+    set timeout timeoutlen=1000 ttimeoutlen=50
+    set showmode		" always show what mode we're currently editing in
+    set showcmd		" Show (partial) command in status line.
+    set showmatch		" Show matching brackets.
+    set ignorecase		" Do case insensitive matching
+    set smartcase		" Do smart case matching
+    set incsearch		" Show search matches while typing
+    " set autowrite		" Automatically save before commands like :next and :make
+    set hidden		" Hide buffers when they are abandoned
+    " set nobackup            " do not keep a backup file, use versions instead
+    set history=500         " keep 500 lines of command line history
+    set ruler               " show the cursor position all the time
+    set nowrap              " NO WRAPPING OF THE LINES!
+    set hlsearch    	" highlight all matches after search
+    set encoding=utf-8      " UTF8 Support
 	ENDOFVIM
 }
 
