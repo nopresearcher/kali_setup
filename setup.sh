@@ -676,6 +676,15 @@ enable_auto_login_lightdm(){
     sed -i '$ a Hidden=true' /etc/xdg/autostart/light-locker.desktop
 }
 
+configure_xfce_settings(){
+    # windows management
+    xfconf-query -n -c xfwm4 -p /general/snap_to_border -t bool -s true
+    xfconf-query -n -c xfwm4 -p /general/snap_to_windows -t bool -s true
+    xfconf-query -n -c xfwm4 -p /general/wrap_windows -t bool -s false
+    xfconf-query -n -c xfwm4 -p /general/wrap_workspaces -t bool -s false
+    # pointer auto focus
+    xfconf-query -n -c xfwm4 -p /general/click_to_focus -t bool -s false
+}
 configure_vmware_tools_share(){
     cat > /usr/local/sbin/mount-shared-folders <<-ENDOFVM
     #!/bin/sh
@@ -946,6 +955,7 @@ main () {
     #configure_gnome_settings
     #enable_auto_login_gnome
     enable_auto_login_lightdm
+    configure_xfce_settings
     configure_vmware_tools_share
     configure_vmware_tools_restart
     configure_gdb
