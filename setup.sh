@@ -143,7 +143,8 @@ install_base_os_tools(){
     # aria2 - CLI download manager with torrent and http resume support
     # git-sizer - detailed size information on git repos
     # libappindicator3-1 - support library for google chrome
-    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer cython3 python3-psutil python3-pyqt5 python3-zmq libappinidcator3-1
+    # gvfs-bin - required for slack app
+    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer cython3 python3-psutil python3-pyqt5 python3-zmq libappinidcator3-1 gvfs-bin
     do
         apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
@@ -283,6 +284,18 @@ github_desktop() {
     fi
     apt_package_install ./GitHubDesktop-linux*
     rm -f ./GitHubDesktop-linux*
+}
+
+install_slack() {
+    printf "  ⏳  Install Slack" | tee -a script.log
+    cd /root/Downloads
+    wget --quiet  https://downloads.slack-edge.com/linux_releases/slack-desktop-4.2.0-amd64.deb
+    if [[ $? != 0 ]]; then
+	    printf "${CLEAR_LINE}❌${RED} $1 failed ${NO_COLOR}\n"
+        echo "$1 failed " >> script.log
+    fi
+    apt_package_install ./slack-desktop*
+    rm -f ./slack-desktop*
 }
 
 install_vscode() {
@@ -925,6 +938,7 @@ main () {
     install_screencast_tools
     folder_prep
     github_desktop
+    install_slack
     install_vscode
     configure_vscode
     install_rtfm
