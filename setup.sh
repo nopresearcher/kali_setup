@@ -689,6 +689,7 @@ enable_auto_login_lightdm(){
     sed -i '$ a Hidden=true' /etc/xdg/autostart/light-locker.desktop
 }
 
+
 configure_xfce_settings(){
     # windows management
     xfconf-query -n -c xfwm4 -p /general/snap_to_border -t bool -s true
@@ -697,7 +698,16 @@ configure_xfce_settings(){
     xfconf-query -n -c xfwm4 -p /general/wrap_workspaces -t bool -s false
     # pointer auto focus
     xfconf-query -n -c xfwm4 -p /general/click_to_focus -t bool -s false
+    # 2x windows scaling - hidpi
+    xfconf-query --create -c xsettings -p /Gdk/WindowScalingFactor -s 2 && xfconf-query -c xfwm4 -p /general/theme -s Default-xhdpi
+    # hidpi terminal
+    cat > /root/.xsessionrc <<-ENDOFX
+    xrandr --dpi 180
+    ENDOFX
+    # login screen hidpi
+    sed -i "s/^.*xft-dpi = 96/xft-dpi = 200/g" /etc/lightdm/lightdm-gtk-greeter.conf
 }
+
 configure_vmware_tools_share(){
     cat > /usr/local/sbin/mount-shared-folders <<-ENDOFVM
     #!/bin/sh
