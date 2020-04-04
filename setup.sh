@@ -19,7 +19,6 @@
 # /usr/bin/script --append --flush --timing=/root/history/timing_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log" /root/history/terminal_"$(date +"%Y_%m_%d_%H_%M_%S_%N_%p").log"
 # pip3 list --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install --upgrade
 # pip list --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install --upgrade
-# gsettings set org.gnome.desktop.background picture-uri '/root/utils/kali_setup/media/wallpaper/dark-kali-2560-1600.png'
 # git@github.com:mbahadou/postenum.git - postenumeration script
 # git@github.com:j3ssie/Osmedeus.git - web scanning framework with local web server
 # for loop for python packages in case one errors out
@@ -144,7 +143,8 @@ install_base_os_tools(){
     # git-sizer - detailed size information on git repos
     # libappindicator3-1 - support library for google chrome
     # gvfs-bin - required for slack app
-    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer cython3 python3-psutil python3-pyqt5 python3-zmq libappinidcator3-1 gvfs-bin
+    # unattended-upgrades - keep apt uptodate
+    for package in apt-transport-https network-manager-openvpn-gnome openresolv strace ltrace sshfs nfs-common open-vm-tools-desktop sshuttle autossh gimp transmission-gtk dbeaver jq aria2 git-sizer cython3 python3-psutil python3-pyqt5 python3-zmq libappinidcator3-1 gvfs-bin unattended-upgrades
     do
         apt-get install -y -q $package >> script.log 2>>script_error.log
     done 
@@ -585,6 +585,7 @@ bash_aliases() {
     # git aliases
     echo "alias gs='git status'" >> /root/.bashrc
     echo "alias ga='git add -A'" >> /root/.bashrc
+    echo "alias ll='ls -la --color=auto'" >> /root/.bashrc
     # increase history size
     sed -i "s/HISTSIZE=1000/HISTSIZE=1000000/g" /root/.bashrc
 }
